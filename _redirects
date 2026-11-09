@@ -1,0 +1,21 @@
+# Pages from the previous site structure
+/furniture-appliance-removal.html   /junk-removal.html       301
+/furniture-appliance-removal        /junk-removal.html       301
+/garage-property-cleanouts.html     /cleanouts.html          301
+/garage-property-cleanouts          /cleanouts.html          301
+/shed-light-demolition.html         /light-demolition.html   301
+/shed-light-demolition              /light-demolition.html   301
+/commercial-junk-removal.html       /office-cleanouts.html   301
+/commercial-junk-removal            /office-cleanouts.html   301
+/commerical-junk-removal.html       /office-cleanouts.html   301
+/commerical-junk-removal            /office-cleanouts.html   301
+/home                               /                        301
+
+# Old image names
+/logo.jpeg              /logo.png              301
+/shed-service.jpeg      /shed-demo.jpeg        301
+/hottub-service.jpeg    /hottub-demo.jpeg      301
+
+# Short links
+/quote        /schedule-a-pickup.html    301
+/calculator   /pricing-calculator.html   301
