@@ -150,7 +150,14 @@ document.addEventListener('DOMContentLoaded', function () {
       var banner = $('.estimate-banner');
       banner.hidden = false;
       banner.querySelector('.estimate-banner-price').textContent = est.price + ' · ' + est.label;
-      if (/[?&]from=calculator/.test(location.search) && !window.__kkModalShown) { window.__kkModalShown = true; showEstimateModal(est); }
+      // Show the price popup once for each new calculator estimate, whichever button brought them here
+      var fresh = false; try { fresh = sessionStorage.getItem('kk-calc-new') === '1'; } catch (e) {}
+      if ((fresh || /[?&]from=calculator/.test(location.search)) && !window.__kkModalShown) {
+        window.__kkModalShown = true;
+        try { sessionStorage.removeItem('kk-calc-new'); } catch (e) {}
+        try { if (/[?&]from=calculator/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+        showEstimateModal(est);
+      }
     }
 
     // "Other" location
