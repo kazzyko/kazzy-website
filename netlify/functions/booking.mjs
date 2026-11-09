@@ -51,10 +51,16 @@ function validDate(date) {
 
 // ---------- Google auth (service account, signed JWT)
 function account() {
-  const raw = process.env.GOOGLE_SERVICE_ACCOUNT;
-  if (!raw || !process.env.GOOGLE_CALENDAR_ID) return null;
-  const a = JSON.parse(raw);
-  return { email: a.client_email, key: (a.private_key || "").replace(/\\n/g, "\n") };
+  // Returns the service account, or a plain-English setup problem (no secrets are ever shown)
+  const raw = (process.env.GOOGLE_SERVICE_ACCOUNT || "").trim();
+  if (!raw) return { problem: "Setup: GOOGLE_SERVICE_ACCOUNT is missing or empty for this deploy." };
+  if (!(process.env.GOOGLE_CALENDAR_ID || "").trim()) return { problem: "Setup: GOOGLE_CALENDAR_ID is missing or empty for this deploy." };
+  let a;
+  try { a = JSON.parse(raw); } catch {
+    return { problem: `Setup: GOOGLE_SERVICE_ACCOUNT isn't the complete JSON file (it starts with "${raw.slice(0, 1)}" and is ${raw.length} characters long; the full file starts with "{" and is about 2,300 characters).` };
+  }
+  if (!a.client_email || !a.private_key) return { problem: "Setup: GOOGLE_SERVICE_ACCOUNT is JSON but is missing client_email or private_key. Paste the whole downloaded key file." };
+  return { email: a.client_email, key: a.private_key.replace(/\\n/g, "\n") };
 }
 async function token(acct) {
   const now = Math.floor(Date.now() / 1000);
@@ -97,8 +103,8 @@ function openSlots(date, list, busy) {
 
 // ---------- handler
 export default async (req) => {
-  const acct = (() => { try { return account(); } catch { return null; } })();
-  if (!acct) return json({ error: "Online booking isn't set up yet." }, 503);
+  const acct = account();
+  if (acct.problem) return json({ error: "Online booking isn't set up yet.", detail: acct.problem }, 503);
 
   try {
     if (req.method === "GET") {
@@ -148,7 +154,12 @@ export default async (req) => {
     return json({ error: "Method not allowed" }, 405);
   } catch (e) {
     console.error(e);
-    return json({ error: "Online booking is having trouble right now. Choose “Contact me to schedule” and we'll set up a time by phone." }, 502);
+    const msg = String(e && e.message || e);
+    const detail = msg.startsWith("auth") ? "Google rejected the service account key. Re-download the JSON key and paste the whole file."
+      : msg.includes("not shared") ? "The calendar isn't shared with the service account email, or GOOGLE_CALENDAR_ID is wrong."
+      : msg.startsWith("freebusy 403") || msg.startsWith("insert 403") ? "Permission denied. Share the calendar with the service account using \"Make changes to events\", and make sure the Google Calendar API is enabled."
+      : msg;
+    return json({ error: "Online booking is having trouble right now. Choose “Contact me to schedule” and we'll set up a time by phone.", detail }, 502);
   }
 };
 
