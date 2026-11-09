@@ -578,8 +578,8 @@ grid-template-columns: 1fr 1fr;
       yards: yards, items: state.manual === null ? picked : ['About ' + yards + ' cubic yards (picked by load size)'], special: special.map(String)
     } : null;
     try {
-      if (window.kkCurrent) sessionStorage.setItem('kk-calc', JSON.stringify(window.kkCurrent));
-      else sessionStorage.removeItem('kk-calc');
+      if (window.kkCurrent) { sessionStorage.setItem('kk-calc', JSON.stringify(window.kkCurrent)); sessionStorage.setItem('kk-calc-new', '1'); }
+      else { sessionStorage.removeItem('kk-calc'); sessionStorage.removeItem('kk-calc-new'); }
     } catch (err) {}
     var w = Math.round(Math.min(1, yards / TRAILER) * 444);
     $('svg-fill-bg').setAttribute('width', w); $('svg-cargo-bar').setAttribute('width', w);
