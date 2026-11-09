@@ -37,13 +37,21 @@ export const handler = async (event) => {
   const to = phoneE164(data.phone);
   if (!to) return { statusCode: 200, body: "no valid phone" };
 
-  const store = getStore({ name: "customer-texts", consistency: "strong" });
-  // Don't text the same number twice within 10 minutes (double submits)
-  const { blobs } = await store.list({ prefix: "" });
-  const recent = Date.now() - 10 * 60 * 1000;
-  if (blobs.some((b) => b.key.endsWith(to) && Number(b.key.split("_")[0]) > recent)) {
-    return { statusCode: 200, body: "duplicate" };
+  // Lambda-style functions can't use "strong" reads, so use the default store mode here.
+  // text-queue (a newer-style function) reads with strong consistency, so new texts show up right away.
+  const store = getStore("customer-texts");
+  try {
+    // Don't text the same number twice within 10 minutes (double submits)
+    const { blobs } = await store.list();
+    const recent = Date.now() - 10 * 60 * 1000;
+    if (blobs.some((b) => b.key.endsWith(to) && Number(b.key.split("_")[0]) > recent)) {
+      console.log("Skipped duplicate for number ending", to.slice(-4));
+      return { statusCode: 200, body: "duplicate" };
+    }
+  } catch (e) {
+    console.log("Duplicate check skipped:", e.message);
   }
   await store.setJSON(`${Date.now()}_${to}`, { to, body: buildText(data), created: new Date().toISOString() });
+  console.log("Queued text for number ending", to.slice(-4));
   return { statusCode: 200, body: "queued" };
 };
