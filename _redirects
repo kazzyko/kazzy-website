@@ -16,6 +16,9 @@
 /shed-service.jpeg      /shed-demo.jpeg        301
 /hottub-service.jpeg    /hottub-demo.jpeg      301
 
+# Keep function source files private
+/netlify/*    /404.html    404!
+
 # Short links
 /quote        /schedule-a-pickup.html    301
 /calculator   /pricing-calculator.html   301

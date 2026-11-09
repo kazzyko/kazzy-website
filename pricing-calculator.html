@@ -577,6 +577,10 @@ grid-template-columns: 1fr 1fr;
       price: showPrice ? money(r.price) : 'Custom quote', label: showPrice ? r.label : 'Specialty items only',
       yards: yards, items: state.manual === null ? picked : ['About ' + yards + ' cubic yards (picked by load size)'], special: special.map(String)
     } : null;
+    try {
+      if (window.kkCurrent) sessionStorage.setItem('kk-calc', JSON.stringify(window.kkCurrent));
+      else sessionStorage.removeItem('kk-calc');
+    } catch (err) {}
     var w = Math.round(Math.min(1, yards / TRAILER) * 444);
     $('svg-fill-bg').setAttribute('width', w); $('svg-cargo-bar').setAttribute('width', w);
   }
@@ -600,12 +604,16 @@ grid-template-columns: 1fr 1fr;
       p.addEventListener('click', function () { state.counts = {}; state.manual = parseFloat(p.dataset.yards); render(); });
     });
     $('calc-reset').addEventListener('click', function () { state.counts = {}; state.manual = null; render(); });
-    $('calc-quote').addEventListener('click', function () {
+    // Any link to the quote/booking page carries the calculator selections along
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || !/schedule-a-pickup\.html/.test(a.getAttribute('href'))) return;
       try {
         if (window.kkCurrent) sessionStorage.setItem('kk-calc', JSON.stringify(window.kkCurrent));
         else sessionStorage.removeItem('kk-calc');
-      } catch (e) {}
-    });
+      } catch (err) {}
+      if (window.kkCurrent) a.setAttribute('href', 'schedule-a-pickup.html?from=calculator#quote-form');
+    }, true);
     render();
   });
   window.kkPriceFor = priceFor;
