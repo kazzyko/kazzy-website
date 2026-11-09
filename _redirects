@@ -18,6 +18,9 @@
 
 # Keep function source files private
 /netlify/*    /404.html    404!
+/node_modules/*    /404.html    404!
+/package.json    /404.html    404!
+/package-lock.json    /404.html    404!
 
 # Short links
 /quote        /schedule-a-pickup.html    301

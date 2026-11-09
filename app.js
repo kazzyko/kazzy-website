@@ -139,6 +139,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var err = $('.form-error'), submit = form.querySelector('button[type="submit"]');
     var bookingOff = false;
 
+    // Let people know a text is coming
+    var micro = form.querySelector('.form-microcopy');
+    if (micro && !form.querySelector('.text-notice')) {
+      micro.insertAdjacentHTML('beforebegin', '<p class="form-microcopy text-notice">By submitting, you agree we can text you at the number above about your request.</p>');
+    }
+
     // Calculator hand-off
     var est = store.get('kk-calc');
     if (est) {
