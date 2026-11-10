@@ -224,18 +224,18 @@
 <div class="nav-dropdown has-mega">
 <a href="./#services" class="nav-link is-active">Services <span class="caret" aria-hidden="true">▼</span></a>
 <div class="dropdown-menu mega">
-<div class="mega-col"><a href="cleanouts.html" class="mega-hub" aria-current="page">Property Cleanouts <span aria-hidden="true">→</span></a>
-<a href="garage-cleanouts.html">Garage &amp; Basement Cleanouts</a>
-<a href="hoarder-cleanouts.html">Hoarder House Cleanouts</a>
-<a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a>
-<a href="estate-cleanouts.html">Estate Cleanouts</a>
-</div>
-<div class="mega-col"><a href="junk-removal.html" class="mega-hub">General Junk Removal <span aria-hidden="true">→</span></a>
+<div class="mega-col"><a href="junk-removal.html" class="mega-hub">Junk Removal <span aria-hidden="true">→</span></a>
 <a href="furniture-removal.html">Furniture Removal</a>
 <a href="appliance-removal.html">Appliance Removal</a>
 <a href="piano-removal.html">Piano Removal</a>
 <a href="pool-table-removal.html">Pool Table Removal</a>
 <a href="mattress-removal.html">Mattress Disposal</a>
+</div>
+<div class="mega-col"><a href="cleanouts.html" class="mega-hub" aria-current="page">Property Cleanouts <span aria-hidden="true">→</span></a>
+<a href="garage-cleanouts.html">Garage &amp; Basement Cleanouts</a>
+<a href="hoarder-cleanouts.html">Hoarder House Cleanouts</a>
+<a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a>
+<a href="estate-cleanouts.html">Estate Cleanouts</a>
 </div>
 <div class="mega-col"><a href="light-demolition.html" class="mega-hub">Light Demolition <span aria-hidden="true">→</span></a>
 <a href="shed-demolition.html">Shed Demolition</a>
@@ -275,20 +275,20 @@
 <div id="mobile-drawer" class="mobile-drawer">
 <div class="container">
 <p class="drawer-label">Services</p>
+<details class="drawer-group"><summary>Junk Removal</summary>
+<a href="junk-removal.html" class="drawer-hub">All Junk Removal →</a>
+<a href="furniture-removal.html">Furniture Removal</a>
+<a href="appliance-removal.html">Appliance Removal</a>
+<a href="piano-removal.html">Piano Removal</a>
+<a href="pool-table-removal.html">Pool Table Removal</a>
+<a href="mattress-removal.html">Mattress Disposal</a>
+</details>
 <details class="drawer-group" open><summary>Property Cleanouts</summary>
 <a href="cleanouts.html" class="drawer-hub" aria-current="page">All Property Cleanouts →</a>
 <a href="garage-cleanouts.html">Garage &amp; Basement Cleanouts</a>
 <a href="hoarder-cleanouts.html">Hoarder House Cleanouts</a>
 <a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a>
 <a href="estate-cleanouts.html">Estate Cleanouts</a>
-</details>
-<details class="drawer-group"><summary>General Junk Removal</summary>
-<a href="junk-removal.html" class="drawer-hub">All General Junk Removal →</a>
-<a href="furniture-removal.html">Furniture Removal</a>
-<a href="appliance-removal.html">Appliance Removal</a>
-<a href="piano-removal.html">Piano Removal</a>
-<a href="pool-table-removal.html">Pool Table Removal</a>
-<a href="mattress-removal.html">Mattress Disposal</a>
 </details>
 <details class="drawer-group"><summary>Light Demolition</summary>
 <a href="light-demolition.html" class="drawer-hub">All Light Demolition →</a>
@@ -336,7 +336,7 @@
 </div>
 <div class="quote-card" id="quote-form">
 <div class="quote-card-header">
-<h2>Get Your Cleanouts Quote</h2>
+<h2>Get Your Cleanouts Estimate</h2>
 <p>We usually reply in under an hour (6 AM – 9 PM daily).</p>
 </div>
 <form name="milwaukee-quote-request" method="POST" action="/thank-you.html" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field" class="kk-quote-form">
@@ -387,21 +387,44 @@
 <label for="service_type" class="form-label">Service needed *</label>
 <select id="service_type" name="service_type" class="form-control" required>
 <option value="" selected>Select a service…</option>
+<optgroup label="Junk Removal"><option>Furniture Removal</option><option>Appliance Removal</option><option>Mattress Disposal</option><option>Mixed junk / several items</option></optgroup>
 <optgroup label="Property Cleanouts"><option data-long="1">Garage &amp; Basement Cleanouts</option><option data-long="1">Hoarder House Cleanouts</option><option data-long="1">Commercial &amp; Office Cleanouts</option><option data-long="1">Estate Cleanouts</option></optgroup>
-<optgroup label="General Junk Removal"><option>Furniture Removal</option><option>Appliance Removal</option><option>Piano Removal</option><option>Pool Table Removal</option><option>Mattress Disposal</option></optgroup>
-<optgroup label="Light Demolition"><option data-long="1">Shed Demolition</option><option data-long="1">Hot Tub Removal</option><option data-long="1">Deck Demolition</option><option data-long="1">Trampoline Removal</option><option data-long="1">Fence Demolition</option></optgroup>
-<optgroup label="Other"><option>General Junk Removal</option><option data-long="1">Above-Ground Pool Removal</option><option>Not sure / Other</option></optgroup>
+<optgroup label="Light Demolition"><option data-long="1">Shed Demolition</option><option data-long="1">Hot Tub Removal</option><option data-long="1">Deck Demolition</option><option data-long="1">Trampoline Removal</option><option data-long="1">Fence Demolition</option><option data-long="1">Above-Ground Pool Removal</option></optgroup>
+<optgroup label="Specialty Items"><option>Piano Removal</option><option>Pool Table Removal</option><option>Heavy sleeper sofa</option><option>Treadmill, home gym or weights</option><option>Safe</option><option>Cast-iron tub or radiator</option><option>Dirt, rocks, concrete or brick</option><option>Roofing shingles</option><option>Construction debris (drywall, tile, plaster)</option></optgroup>
+<optgroup label="Other"><option>Not sure / Other</option></optgroup>
 </select>
+<p class="field-hint">Need more than one? Pick the main one and tell us the rest below.</p>
 </div>
 </div>
-<div class="form-row">
-<div class="form-group">
-<label for="item_location" class="form-label">Where are the items? *</label>
-<select id="item_location" name="item_location" class="form-control" required>
-<option value="">Select a location…</option>
-<option>Curbside or driveway</option><option>First floor</option><option>Basement</option><option>Second floor or higher</option><option>Attic</option><option>Garage</option><option>Backyard or outdoors</option><option>Multiple locations</option><option>Other</option>
-</select>
+<fieldset class="form-group chip-field loc-field">
+<legend class="form-label">Where are the items? * <span class="opt">(check all that apply)</span></legend>
+<input type="hidden" name="item_location" value="" />
+<div class="check-chips">
+<label class="check-chip"><input type="checkbox" data-loc value="Curbside or driveway" /><span>Curbside or driveway</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="Garage" /><span>Garage</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="Basement" /><span>Basement</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="First floor" /><span>First floor</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="Second floor or higher" /><span>Second floor or higher</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="Attic" /><span>Attic</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="Backyard or outdoors" /><span>Backyard or outdoors</span></label>
+<label class="check-chip"><input type="checkbox" data-loc value="Other" /><span>Other</span></label>
 </div>
+</fieldset>
+<div class="form-group location-other" hidden>
+<label for="item_location_other" class="form-label">Tell us where the items are</label>
+<input type="text" id="item_location_other" name="item_location_other" class="form-control" placeholder="e.g. 3rd-floor apartment, storage unit, crawl space" />
+</div>
+<fieldset class="form-group chip-field">
+<legend class="form-label">Anything that makes it tricky? <span class="opt">(optional)</span></legend>
+<input type="hidden" name="access_notes" value="" />
+<div class="check-chips">
+<label class="check-chip"><input type="checkbox" data-access value="Stairs" /><span>Stairs</span></label>
+<label class="check-chip"><input type="checkbox" data-access value="Long walk to the truck" /><span>Long walk to the truck</span></label>
+<label class="check-chip"><input type="checkbox" data-access value="Tight doorways or turns" /><span>Tight doorways or turns</span></label>
+<label class="check-chip"><input type="checkbox" data-access value="Needs to be taken apart" /><span>Needs to be taken apart</span></label>
+<label class="check-chip"><input type="checkbox" data-access value="Very heavy items" /><span>Very heavy items</span></label>
+</div>
+</fieldset>
 <div class="form-group">
 <label for="preferred_timing" class="form-label">When do you need it done? *</label>
 <select id="preferred_timing" name="preferred_timing" class="form-control" required>
@@ -409,14 +432,9 @@
 <option>As soon as possible (today if available)</option><option>Within the next week</option><option>More than a week from now</option><option>Flexible, just getting a price</option>
 </select>
 </div>
-</div>
-<div class="form-group location-other" hidden>
-<label for="item_location_other" class="form-label">Tell us where the items are</label>
-<input type="text" id="item_location_other" name="item_location_other" class="form-control" placeholder="e.g. basement and garage, or 3rd-floor apartment" />
-</div>
 <div class="form-group">
 <label for="job_description" class="form-label">What are we removing or tearing down? *</label>
-<textarea id="job_description" name="job_description" class="form-control" placeholder="Roughly what items you have, or the size of the shed, deck or hot tub" required></textarea>
+<textarea id="job_description" name="job_description" class="form-control" placeholder="e.g. a couch and dresser upstairs, plus boxes and an old mower in the garage. For demolition, roughly how big it is." required></textarea>
 </div>
 <fieldset class="form-group mini-calc">
 <legend class="form-label">How much stuff is there? <span class="opt">(optional, for a quick estimate)</span></legend>
@@ -546,7 +564,7 @@
 <section class="section" style="padding-top:0;">
 <div class="container">
 <div class="section-header" style="margin-bottom:1.25rem;"><h2 style="font-size:1.5rem;">Other services</h2></div>
-<div class="related-links"><a href="junk-removal.html">General Junk Removal</a><a href="light-demolition.html">Light Demolition</a><a href="pricing-calculator.html">Price Calculator</a><a href="before-after.html">Before &amp; After</a></div>
+<div class="related-links"><a href="junk-removal.html">Junk Removal</a><a href="light-demolition.html">Light Demolition</a><a href="pricing-calculator.html">Price Calculator</a><a href="before-after.html">Before &amp; After</a></div>
 </div>
 </section>
 
@@ -578,22 +596,22 @@
 </div>
 </div>
 <div class="footer-col">
-<h2><a href="cleanouts.html">Property Cleanouts</a></h2>
-<ul class="footer-links">
-<li><a href="garage-cleanouts.html">Garage &amp; Basement Cleanouts</a></li>
-<li><a href="hoarder-cleanouts.html">Hoarder House Cleanouts</a></li>
-<li><a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a></li>
-<li><a href="estate-cleanouts.html">Estate Cleanouts</a></li>
-</ul>
-</div>
-<div class="footer-col">
-<h2><a href="junk-removal.html">General Junk Removal</a></h2>
+<h2><a href="junk-removal.html">Junk Removal</a></h2>
 <ul class="footer-links">
 <li><a href="furniture-removal.html">Furniture Removal</a></li>
 <li><a href="appliance-removal.html">Appliance Removal</a></li>
 <li><a href="piano-removal.html">Piano Removal</a></li>
 <li><a href="pool-table-removal.html">Pool Table Removal</a></li>
 <li><a href="mattress-removal.html">Mattress Disposal</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h2><a href="cleanouts.html">Property Cleanouts</a></h2>
+<ul class="footer-links">
+<li><a href="garage-cleanouts.html">Garage &amp; Basement Cleanouts</a></li>
+<li><a href="hoarder-cleanouts.html">Hoarder House Cleanouts</a></li>
+<li><a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a></li>
+<li><a href="estate-cleanouts.html">Estate Cleanouts</a></li>
 </ul>
 </div>
 <div class="footer-col">

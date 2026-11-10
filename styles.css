@@ -222,6 +222,7 @@ strong { font-weight: 700; }
 .hero h1 .accent, .accent { color: var(--gold-300); }
 .hero-lead { font-size: 1.08rem; color: #e6efff; margin-bottom: 1.6rem; max-width: 60ch; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.75rem; }
+@media (max-width: 560px) { .hero .hero-actions { display: grid; grid-template-columns: 1fr; } .hero .hero-actions .btn { width: 100%; } }
 .hero-actions-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
 .hero-contact { margin-bottom: 1.75rem; }
 @media (max-width: 420px) { .hero-actions-2 { grid-template-columns: 1fr; } }
@@ -608,6 +609,18 @@ textarea.form-control { min-height: 96px; resize: vertical; }
 .estimate-banner-label { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold-700); }
 .estimate-banner-price { display: block; font-family: var(--font-display); font-size: 1.35rem; color: var(--royal-900); margin: 0.1rem 0 0.25rem; }
 .estimate-banner-note { display: block; font-size: 0.82rem; color: var(--body); }
+.field-hint { margin: 0.35rem 0 0; font-size: 0.78rem; color: #5b6b86; line-height: 1.35; }
+.chip-field { border: 0; padding: 0; }
+.chip-field legend { margin-bottom: 0.5rem; }
+.check-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.check-chip { position: relative; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.8rem; border: 1.5px solid #c3d3ee; border-radius: 999px; background: #fff; cursor: pointer; font-size: 0.86rem; font-weight: 600; color: var(--royal-900); transition: border-color .15s, background .15s; user-select: none; }
+.check-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.check-chip span::before { content: ""; display: inline-block; width: 15px; height: 15px; margin-right: 0.45rem; vertical-align: -2px; border: 1.5px solid #9fb3d9; border-radius: 4px; background: #fff; }
+.check-chip:hover { border-color: var(--royal-500); }
+.check-chip:has(input:checked) { border-color: var(--royal-500); background: var(--royal-50); }
+.check-chip:has(input:checked) span::before { background: var(--royal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; border-color: var(--royal-600); }
+.check-chip:has(input:focus-visible) { outline: 3px solid var(--gold-400); outline-offset: 2px; }
+.chip-field.has-error .check-chip { border-color: #dc2626; }
 .mini-calc { border: 0; padding: 0; }
 .mini-calc legend { margin-bottom: 0.5rem; }
 .size-chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.45rem; }

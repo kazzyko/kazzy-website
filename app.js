@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function initForm(form) {
     var $ = function (sel) { return form.querySelector(sel); };
-    var service = $('#service_type'), loc = $('#item_location'), locOther = $('.location-other');
+    var service = $('#service_type'), locField = $('.loc-field'), locOther = $('.location-other');
     var panel = $('.booking-panel'), dateIn = $('#booking_date'), grid = $('.slot-grid'), note = $('.slot-length-note');
     var address = $('#service_address'), slotField = $('[name="booking_slot"]'), status = $('[name="booking_status"]');
     var err = $('.form-error'), submit = form.querySelector('button[type="submit"]');
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var syncMini = function () {
           var o = service.options[service.selectedIndex];
           var group = (o && o.parentNode && o.parentNode.label) || '';
-          var off = group === 'Light Demolition' || /piano|pool/i.test(o ? o.text : '');
+          var off = group === 'Light Demolition' || group === 'Specialty Items';
           mini.hidden = off;
           if (off) {
             Array.prototype.forEach.call(mini.querySelectorAll('input[name="load_size"]'), function (i) { i.checked = false; });
@@ -195,13 +195,29 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    // "Other" location
+    // Item locations and access notes: check-all-that-apply chips feed hidden fields
+    var chipsToField = function (attr, fieldName) {
+      var boxes = form.querySelectorAll('input[' + attr + ']');
+      var field = $('[name="' + fieldName + '"]');
+      var sync = function () {
+        field.value = Array.prototype.filter.call(boxes, function (b) { return b.checked; })
+          .map(function (b) { return b.value; }).join(', ');
+      };
+      Array.prototype.forEach.call(boxes, function (b) { b.addEventListener('change', sync); });
+      sync();
+      return field;
+    };
+    var locHidden = chipsToField('data-loc', 'item_location');
+    chipsToField('data-access', 'access_notes');
     var syncLoc = function () {
-      var show = loc.value === 'Other' || loc.value === 'Multiple locations';
+      var other = form.querySelector('input[data-loc][value="Other"]');
+      var show = !!(other && other.checked);
       locOther.hidden = !show;
       $('#item_location_other').required = show;
+      if (locHidden.value) locField.classList.remove('has-error');
     };
-    loc.addEventListener('change', syncLoc); syncLoc();
+    Array.prototype.forEach.call(form.querySelectorAll('input[data-loc]'), function (b) { b.addEventListener('change', syncLoc); });
+    syncLoc();
 
     // Booking
     var isLong = function () { var o = service.options[service.selectedIndex]; return !!(o && o.dataset.long); };
@@ -258,6 +274,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', function (e) {
       err.hidden = true;
+      if (!locHidden.value) {
+        e.preventDefault();
+        locField.classList.add('has-error');
+        err.textContent = 'Please check at least one place where the items are.'; err.hidden = false;
+        locField.scrollIntoView({ block: 'center' });
+        return;
+      }
       if (!booking()) { status.value = 'Contact to schedule'; return; } // normal Netlify submit
       e.preventDefault();
       if (!form.reportValidity()) return;
@@ -270,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function () {
         body: JSON.stringify({
           name: v('#full_name'), phone: v('#phone'), email: v('#email'), address: v('#service_address'),
           service: v('#service_type'), date: v('#booking_date'), slot: slotField.value.split('|')[0],
-          location: v('#item_location') + (v('#item_location_other') ? ': ' + v('#item_location_other') : ''),
-          details: v('#job_description'), estimate: v('[name="estimated_price"]'), hp: v('[name="bot-field"]')
+          location: v('[name="item_location"]') + (v('#item_location_other') ? ': ' + v('#item_location_other') : ''),
+          details: v('#job_description') + (v('[name="access_notes"]') ? '\nAccess: ' + v('[name="access_notes"]') : ''), estimate: v('[name="estimated_price"]'), hp: v('[name="bot-field"]')
         })
       })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
