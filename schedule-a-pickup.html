@@ -327,6 +327,18 @@
 <label for="job_description" class="form-label">What are we removing or tearing down? *</label>
 <textarea id="job_description" name="job_description" class="form-control" placeholder="Roughly what items you have, or the size of the shed, deck or hot tub" required></textarea>
 </div>
+<fieldset class="form-group mini-calc">
+<legend class="form-label">How much stuff is there? <span class="opt">(optional, for a quick estimate)</span></legend>
+<div class="size-chips-wrap"><div class="size-chips">
+<label class="size-chip"><input type="radio" name="load_size" value="1–2 items ($125)" data-price="$125" /><span class="size-chip-name">1–2 items</span><span class="size-chip-hint">A couch, mattress or appliance</span><span class="size-chip-bar"><i style="width:12%"></i></span><span class="size-chip-price">$125</span></label>
+<label class="size-chip"><input type="radio" name="load_size" value="1/4 trailer ($250)" data-price="$250" /><span class="size-chip-name">1/4 trailer</span><span class="size-chip-hint">A few pieces or a small pile</span><span class="size-chip-bar"><i style="width:25%"></i></span><span class="size-chip-price">$250</span></label>
+<label class="size-chip"><input type="radio" name="load_size" value="1/2 trailer ($400)" data-price="$400" /><span class="size-chip-name">1/2 trailer</span><span class="size-chip-hint">A room or part of a garage</span><span class="size-chip-bar"><i style="width:50%"></i></span><span class="size-chip-price">$400</span></label>
+<label class="size-chip"><input type="radio" name="load_size" value="3/4 trailer ($550)" data-price="$550" /><span class="size-chip-name">3/4 trailer</span><span class="size-chip-hint">A full garage or basement</span><span class="size-chip-bar"><i style="width:75%"></i></span><span class="size-chip-price">$550</span></label>
+<label class="size-chip"><input type="radio" name="load_size" value="Full trailer ($700)" data-price="$700" /><span class="size-chip-name">Full trailer</span><span class="size-chip-hint">A big cleanout</span><span class="size-chip-bar"><i style="width:100%"></i></span><span class="size-chip-price">$700</span></label>
+</div></div>
+<p class="mini-calc-result" hidden>Estimated <strong></strong>. Your final price is set on site by how much of the trailer your items actually fill.</p>
+<a href="pricing-calculator.html" class="mini-calc-link">Want a closer number? Pick your items in the price calculator →</a>
+</fieldset>
 <div class="form-group">
 <label for="job_photo" class="form-label">Photo for faster pricing <span class="opt">(optional)</span></label>
 <div class="file-input-wrapper">

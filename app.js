@@ -166,6 +166,35 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
+    // Mini estimator (quick load-size pick). Hidden when a calculator estimate already came in,
+    // and for demolition or specialty jobs, which aren't priced by trailer space.
+    var mini = form.querySelector('.mini-calc');
+    if (mini) {
+      if (est) { mini.hidden = true; }
+      else {
+        var miniRes = mini.querySelector('.mini-calc-result');
+        var priceField = $('[name="estimated_price"]');
+        mini.addEventListener('change', function (e) {
+          var r = e.target;
+          if (r.name !== 'load_size') return;
+          miniRes.hidden = false;
+          miniRes.querySelector('strong').textContent = r.getAttribute('data-price');
+          priceField.value = r.getAttribute('data-price') + ' (' + r.value.replace(/ \(\$\d+\)$/, '') + ', picked on the form)';
+        });
+        var syncMini = function () {
+          var o = service.options[service.selectedIndex];
+          var group = (o && o.parentNode && o.parentNode.label) || '';
+          var off = group === 'Light Demolition' || /piano|pool/i.test(o ? o.text : '');
+          mini.hidden = off;
+          if (off) {
+            Array.prototype.forEach.call(mini.querySelectorAll('input[name="load_size"]'), function (i) { i.checked = false; });
+            miniRes.hidden = true; priceField.value = '';
+          }
+        };
+        service.addEventListener('change', syncMini); syncMini();
+      }
+    }
+
     // "Other" location
     var syncLoc = function () {
       var show = loc.value === 'Other' || loc.value === 'Multiple locations';
