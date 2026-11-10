@@ -1,7 +1,11 @@
 // Runs automatically after Netlify accepts a quote-form submission (spam is already filtered out).
 // It writes the customer's text message into a small queue. The iPhone shortcut picks it up
 // from /api/text-queue and sends it from the business phone.
+// It also emails a short "KKLEAD" ping to the business phone's carrier text gateway
+// (PING_TO, e.g. 4143886289@tmomail.net). That ping arrives as a text, and an iPhone
+// automation that watches for "KKLEAD" runs the shortcut right away.
 import { connectLambda, getStore } from "@netlify/blobs";
+import nodemailer from "nodemailer";
 
 const FORM = "milwaukee-quote-request";
 
@@ -25,6 +29,25 @@ export function buildText(data) {
     return `${hi} We got your booking for ${when}. We'll reach out to you soon to confirm your appointment. Feel free to text us photos of the items here.`;
   }
   return `${hi} Thanks for your request! We'll reach out to you shortly to get you scheduled. Feel free to text us photos of the items here for a faster quote.`;
+}
+
+async function sendPing(data) {
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  const toAddr = process.env.PING_TO;
+  if (!pass || !toAddr) { console.log("Ping skipped: GMAIL_APP_PASSWORD or PING_TO not set"); return; }
+  const user = process.env.GMAIL_USER || "kazzykohauling@gmail.com";
+  const name = firstName(data.full_name) || "Someone";
+  const status = String(data.booking_status || "");
+  const what = status.startsWith("Booked online:")
+    ? "booked " + status.replace("Booked online:", "").trim()
+    : "wants a call to schedule";
+  try {
+    const mail = nodemailer.createTransport({ host: "smtp.gmail.com", port: 465, secure: true, auth: { user, pass } });
+    await mail.sendMail({ from: user, to: toAddr, subject: "KKLEAD", text: `KKLEAD New lead: ${name} ${what}`.replace(/[–—]/g, "-").slice(0, 150) });
+    console.log("Ping sent");
+  } catch (e) {
+    console.log("Ping failed:", e.message);
+  }
 }
 
 export const handler = async (event) => {
@@ -53,5 +76,6 @@ export const handler = async (event) => {
   }
   await store.setJSON(`${Date.now()}_${to}`, { to, body: buildText(data), created: new Date().toISOString() });
   console.log("Queued text for number ending", to.slice(-4));
+  await sendPing(data);
   return { statusCode: 200, body: "queued" };
 };
