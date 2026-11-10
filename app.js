@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
       panel.hidden = !on;
       address.required = on; dateIn.required = on;
       note.textContent = isLong() ? 'Cleanouts and demolition book a half-day (6-hour) block' : '2-hour arrival window';
-      submit.textContent = on ? 'Book My Time Slot →' : 'Request My Free Quote →';
+      submit.textContent = on ? 'Book My Time Slot →' : 'Request My Free Estimate →';
       if (on && !dateIn.min) {
         var t = chicagoToday(); dateIn.min = t; dateIn.max = addDays(t, 30);
         var timing = $('#preferred_timing').value;
