@@ -484,6 +484,25 @@ grid-template-columns: 1fr 1fr;
 .special-note { background: var(--gold-100); border: 2px solid var(--gold-400); border-radius: var(--radius-md); padding: 0.8rem 1rem; margin: -0.5rem 0 1.25rem; color: var(--royal-900); font-size: 0.9rem; }
 .special-note strong { display: block; margin-bottom: 0.15rem; }
 .calc-hero-banner .breadcrumbs { text-align: left; }
+.calc-float { position: fixed; z-index: 1001; right: 1.25rem; bottom: 1.25rem; width: min(380px, calc(100% - 2.5rem)); display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.85rem 0.75rem 1rem; background: var(--royal-950); color: #fff; border: 2px solid var(--gold-400); border-radius: var(--radius-md); box-shadow: 0 14px 34px rgba(11, 29, 69, 0.4); animation: calcFloatIn .2s ease-out; }
+.calc-float[hidden] { display: none; }
+.calc-float-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.calc-float-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-200); }
+.calc-float-row { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+.calc-float-price { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--gold-300); line-height: 1; }
+.calc-float-sub { font-size: 0.78rem; color: #c9d6f0; font-weight: 600; }
+.calc-float-meter { display: block; height: 5px; border-radius: 99px; background: rgba(255,255,255,0.15); overflow: hidden; margin-top: 0.3rem; }
+.calc-float-meter i { display: block; height: 100%; width: 0; background: var(--gold-400); border-radius: 99px; transition: width .25s; }
+.calc-float-call { display: none; }
+.calc-float-btn { flex-shrink: 0; padding: 0.7rem 1rem; font-size: 0.92rem; white-space: nowrap; }
+@keyframes calcFloatIn { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (max-width: 767px) {
+  .calc-float { left: 0; right: 0; bottom: 0; width: auto; border-radius: 0; border-width: 3px 0 0; padding: 0.6rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom)); gap: 0.6rem; }
+  .calc-float-call { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.35); border-radius: 999px; text-decoration: none; font-size: 1.1rem; }
+  body.calc-float-on .mobile-sticky-bar { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .calc-float { animation: none; } .calc-float-meter i { transition: none; } }
+
 .calc-howto { display: grid; gap: 1rem; margin-top: 2.5rem; }
 @media (min-width: 768px) { .calc-howto { grid-template-columns: 1fr 1fr; } }
 </style>
@@ -581,6 +600,14 @@ grid-template-columns: 1fr 1fr;
       if (window.kkCurrent) { sessionStorage.setItem('kk-calc', JSON.stringify(window.kkCurrent)); sessionStorage.setItem('kk-calc-new', '1'); }
       else { sessionStorage.removeItem('kk-calc'); sessionStorage.removeItem('kk-calc-new'); }
     } catch (err) {}
+    $('float-price').textContent = showPrice ? money(r.price) + (special.length ? ' +' : '') : 'Custom quote';
+    var bits = [];
+    if (yards > 0) bits.push(yards > TRAILER ? 'More than 1 load' : pct + '% full');
+    if (state.manual === null && items) bits.push(items + ' item' + (items === 1 ? '' : 's'));
+    if (special.length) bits.push(special.length + ' specialty');
+    $('float-sub').textContent = bits.join(' · ');
+    $('float-meter').style.width = pct + '%';
+    if (window.kkFloatSync) window.kkFloatSync();
     var w = Math.round(Math.min(1, yards / TRAILER) * 444);
     $('svg-fill-bg').setAttribute('width', w); $('svg-cargo-bar').setAttribute('width', w);
   }
@@ -614,6 +641,19 @@ grid-template-columns: 1fr 1fr;
       } catch (err) {}
       if (window.kkCurrent) a.setAttribute('href', 'schedule-a-pickup.html?from=calculator#quote-form');
     }, true);
+    // Floating price bar: shows once something is picked and the main price panel is scrolled out of view
+    var floatBar = $('calc-float'), panelSeen = true, ctaSeen = false;
+    window.kkFloatSync = function () {
+      var show = !!window.kkCurrent && !panelSeen && !ctaSeen;
+      floatBar.hidden = !show;
+      document.body.classList.toggle('calc-float-on', show);
+    };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) { panelSeen = en[0].isIntersecting; window.kkFloatSync(); })
+        .observe(document.querySelector('.price-readout-panel'));
+      new IntersectionObserver(function (en) { ctaSeen = en[0].isIntersecting; window.kkFloatSync(); })
+        .observe($('calc-quote'));
+    }
     render();
   });
   window.kkPriceFor = priceFor;
@@ -1496,6 +1536,15 @@ grid-template-columns: 1fr 1fr;
 </div>
 </div>
 </section>
+<div class="calc-float" id="calc-float" hidden>
+<div class="calc-float-info">
+<span class="calc-float-label">Your estimate</span>
+<span class="calc-float-row"><strong class="calc-float-price" id="float-price">$125</strong><span class="calc-float-sub" id="float-sub"></span></span>
+<span class="calc-float-meter"><i id="float-meter"></i></span>
+</div>
+<a href="tel:+14143886289" class="calc-float-call" aria-label="Call (414) 388-6289">📞</a>
+<a href="schedule-a-pickup.html?from=calculator#quote-form" class="btn btn-primary calc-float-btn">Book Now →</a>
+</div>
 <section class="cta-band">
 <div class="container">
 <h2>Want a closer estimate?</h2>
