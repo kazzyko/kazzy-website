@@ -2,6 +2,7 @@
   "name": "kazzy-website",
   "private": true,
   "dependencies": {
-    "@netlify/blobs": "8.1.2"
+    "@netlify/blobs": "8.1.2",
+    "nodemailer": "6.9.16"
   }
 }
