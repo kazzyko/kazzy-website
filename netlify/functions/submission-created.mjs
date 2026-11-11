@@ -22,13 +22,13 @@ function firstName(full) {
 
 export function buildText(data) {
   const name = firstName(data.full_name);
-  const hi = name ? `Hi ${name}, this is Kazzy & Ko Hauling.` : "Hi, this is Kazzy & Ko Hauling.";
+  const hi = name ? `Hi ${name}, this is Ben with Kazzy & Ko Hauling.` : "Hi, this is Ben with Kazzy & Ko Hauling.";
   const status = String(data.booking_status || "");
   if (status.startsWith("Booked online:")) {
     const when = status.replace("Booked online:", "").trim();
-    return `${hi} We got your booking for ${when}. We'll reach out to you soon to confirm your appointment. Feel free to text us photos of the items here.`;
+    return `${hi} We received your booking for ${when}. We'll follow up soon to confirm everything.`;
   }
-  return `${hi} Thanks for your request! We'll reach out to you shortly to get you scheduled. Feel free to text us photos of the items here for a faster quote.`;
+  return `${hi} Thanks for your request. We'll be in touch soon. If you have any questions in the meantime, just reply to this text.`;
 }
 
 async function sendPing(data) {

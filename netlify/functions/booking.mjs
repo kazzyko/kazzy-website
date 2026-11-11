@@ -13,7 +13,7 @@ import crypto from "node:crypto";
 const TZ = "America/Chicago";
 const SHORT_SLOTS = [["06:00", "08:00"], ["08:00", "10:00"], ["10:00", "12:00"], ["12:00", "14:00"], ["14:00", "16:00"], ["16:00", "18:00"]];
 const LONG_SLOTS = [["06:00", "12:00"], ["12:00", "18:00"]];
-const LONG_SERVICES = new Set(["Above-Ground Pool Removal", "Commercial & Office Cleanouts", "Deck Demolition", "Estate Cleanouts", "Fence Demolition", "Garage & Basement Cleanouts", "Hoarder House Cleanouts", "Hot Tub Removal", "Shed Demolition", "Trampoline Removal"]);
+const LONG_SERVICES = new Set(["Light Demolition", "Property Cleanout"]);
 const DAYS_AHEAD = 30;
 const NOTICE_MINUTES = 120;
 
