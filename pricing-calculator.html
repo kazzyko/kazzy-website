@@ -503,6 +503,78 @@ grid-template-columns: 1fr 1fr;
 }
 @media (prefers-reduced-motion: reduce) { .calc-float { animation: none; } .calc-float-meter i { transition: none; } }
 
+/* ---- Compact layout: more of the calculator above the fold ---- */
+.calc-hero-banner { padding: 0.85rem 0 1.15rem; }
+.calc-hero-banner .breadcrumbs { margin-bottom: 0.35rem; }
+.calc-hero-banner h1 { font-size: clamp(1.5rem, 3.6vw, 2.35rem); margin-bottom: 0.3rem; }
+.calc-hero-banner p { font-size: 0.92rem; }
+.section.calc-section { padding-top: 1.1rem; }
+.calc-card-top-bar { padding: 0.55rem 0.85rem; flex-wrap: nowrap; }
+.calc-card-top-bar .rig-badge { font-size: 0.68rem; padding: 0.28rem 0.7rem; white-space: nowrap; }
+.calc-reset-btn { white-space: nowrap; }
+.calc-body { padding: 0.9rem 0.85rem 1.25rem; }
+.rig-stage { padding: 0.4rem 0.35rem 0.2rem; margin-bottom: 0.75rem; }
+.load-status-title { font-size: clamp(1.1rem, 3.4vw, 1.4rem); margin-bottom: 0.3rem; }
+.meter-track { height: 15px; }
+.volume-subtext { font-size: 0.8rem; margin-bottom: 0.65rem; }
+.tier-pills-bar { margin-bottom: 0.75rem; gap: 0.3rem; }
+.tier-pill { padding: 0.36rem 0.15rem; font-size: 0.68rem; }
+.price-readout-panel { padding: 0.75rem 1rem; margin-bottom: 0.9rem; gap: 0.2rem; flex-direction: column !important; align-items: flex-start !important; }
+.price-big-number { font-size: clamp(2rem, 5.5vw, 2.6rem); display: inline-block; }
+.price-tier-subtitle { font-size: 0.82rem; color: var(--gold-200); font-weight: 800; }
+.special-note { margin: 0 0 0.9rem; }
+.item-grid-header { margin-bottom: 0.25rem; scroll-margin-top: 90px; }
+.calc-items-title { font-size: 1rem; font-weight: 900; color: var(--royal-800); text-transform: uppercase; letter-spacing: 0.02em; margin: 0; }
+.calc-items-hint { font-size: 0.74rem; font-weight: 700; color: var(--royal-600); }
+.item-cat-title { margin: 0.8rem 0 0.4rem; font-size: 0.76rem; }
+.item-selector-grid { gap: 0.45rem; }
+.item-tile { min-height: 46px; padding: 0.3rem 0.5rem; border-radius: 12px; box-shadow: 0 3px 0 var(--royal-600), 0 5px 10px rgba(29, 78, 216, 0.08); }
+.item-tile-name { font-size: 0.78rem; }
+.item-tile-vol { font-size: 0.64rem; margin-top: 1px; }
+.item-plus-only { width: 28px; height: 28px; font-size: 1.05rem; border-radius: 8px; }
+.item-counter-controls { height: 46px; }
+.item-tile.active .item-tile-info { padding: 0.3rem 0.25rem 0.3rem 0.5rem; }
+.qty-btn { width: 30px; }
+.item-tile-vol { white-space: nowrap; }
+@media (max-width: 639px) {
+  .qty-btn { width: 26px; font-size: 1.05rem; }
+  .qty-count-display { min-width: 20px; padding: 0 2px; }
+  .item-tile.active .item-tile-name { font-size: 0.76rem; }
+}
+.special-intro { font-size: 0.82rem; }
+.calc-fineprint { font-size: 0.8rem; color: var(--slate-600); text-align: center; margin: 1.1rem 0 0.85rem; line-height: 1.45; }
+.calc-cta-grid { margin-top: 0; }
+@media (min-width: 640px) {
+  .calc-body { padding: 1.1rem 1.4rem 1.6rem; }
+  .item-selector-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Two columns on desktop: trailer + price stay in view while items are tapped */
+@media (min-width: 980px) {
+  .calc-card-shell { max-width: 1160px; overflow: clip; }
+  .calc-body { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 1.75rem; align-items: start; }
+  .calc-left { position: sticky; top: 92px; }
+  .calc-hero-banner p { display: inline; }
+}
+@media (min-width: 980px) and (max-width: 1139px) { .calc-right .item-selector-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* "Add items" cue with a bouncing arrow */
+.add-items-cue { display: flex; align-items: center; justify-content: center; gap: 0.55rem; width: 100%; margin: 0 0 0.6rem; padding: 0.6rem 1rem; background: linear-gradient(180deg, var(--gold-200) 0%, var(--gold-400) 100%); color: var(--royal-900); border: 2.5px solid var(--royal-700); border-radius: 999px; box-shadow: 0 3px 0 var(--royal-800); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; animation: cueGlow 1.8s ease-in-out infinite; }
+.cue-arrow { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--royal-800); color: var(--gold-300); font-size: 1rem; animation: cueBounce 0.9s ease-in-out infinite; }
+.add-items-cue.done { animation: none; background: #fff; border-color: var(--royal-300); box-shadow: 0 2px 0 var(--royal-300); font-size: 0.85rem; padding: 0.45rem 1rem; }
+.add-items-cue.done .cue-arrow { animation: none; width: 22px; height: 22px; font-size: 0.85rem; }
+@keyframes cueBounce { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(4px); } }
+@keyframes cueGlow { 0%, 100% { box-shadow: 0 3px 0 var(--royal-800), 0 0 0 0 rgba(250, 204, 21, 0.55); } 50% { box-shadow: 0 3px 0 var(--royal-800), 0 0 0 8px rgba(250, 204, 21, 0); } }
+
+/* Price bubble that pops up from each tapped item */
+.price-pop { position: fixed; z-index: 1002; pointer-events: none; transform: translate(-50%, -100%); background: var(--royal-950); color: var(--gold-300); border: 2px solid var(--gold-400); border-radius: 999px; padding: 0.22rem 0.7rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.98rem; font-weight: 900; white-space: nowrap; box-shadow: 0 8px 18px rgba(11, 29, 69, 0.35); animation: pricePop 1.25s ease-out forwards; font-size: 0.9rem; padding: 0.2rem 0.55rem; }
+.price-pop small { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold-200); }
+@keyframes pricePop { 0% { opacity: 0; transform: translate(-50%, -20%) scale(0.7); } 14% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); } 28% { transform: translate(-50%, -50%) scale(1); } 75% { opacity: 1; transform: translate(-50%, -65%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -100%) scale(0.96); } }
+.calc-float-price { display: inline-block; }
+.bump { animation: priceBump 0.35s ease-out; }
+@keyframes priceBump { 0% { transform: scale(1); } 40% { transform: scale(1.14); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .add-items-cue, .cue-arrow, .bump { animation: none; } .price-pop { animation-duration: 0.01s; animation-delay: 0.9s; } }
+
 .calc-howto { display: grid; gap: 1rem; margin-top: 2.5rem; }
 @media (min-width: 768px) { .calc-howto { grid-template-columns: 1fr 1fr; } }
 </style>
@@ -537,7 +609,7 @@ grid-template-columns: 1fr 1fr;
   }
 
   function priceFor(yards, items) {
-    if (yards <= 0) return { price: 125, badge: 'STARTING MINIMUM', sub: '1–2 bulky items or a small pickup', pill: -1, head: 'TAP WHAT NEEDS TO GO', label: 'Minimum pickup' };
+    if (yards <= 0) return { price: 125, badge: 'STARTING MINIMUM', sub: '1–2 bulky items or a small pickup', pill: -1, head: 'TRAILER IS EMPTY', label: 'Minimum pickup' };
     var pct = Math.round(Math.min(yards, TRAILER) / TRAILER * 100);
     if (items > 0 && items <= 2 && yards <= 4) {
       return { price: 125, badge: 'MINIMUM PICKUP', sub: '1–2 bulky items are always our $125 minimum', pill: 0, head: 'MINIMUM PICKUP', label: 'Minimum pickup (1–2 bulky items)' };
@@ -576,7 +648,7 @@ grid-template-columns: 1fr 1fr;
       ? 'About ' + yards + ' cubic yards' + cnt + ', more than our 14-yard trailer holds in one trip'
       : yards > 0
       ? 'About ' + yards + ' of 14 cubic yards' + cnt
-      : 'Every job is priced by the space it takes in our 14-cubic-yard (16\' × 6\' × 4\') trailer.';
+      : 'Priced by how much of our 14-cubic-yard trailer your items fill.';
     var showPrice = !(special.length && yards === 0);
     $('price-display').textContent = showPrice ? money(r.price) + (special.length ? ' +' : '') : 'Custom quote';
     $('price-tier-badge').textContent = showPrice ? r.badge : 'SPECIALTY ITEMS';
@@ -618,6 +690,34 @@ grid-template-columns: 1fr 1fr;
     state.manual = null;
     state.counts[id] = btn && btn.dataset.action === 'minus' ? Math.max(0, cur - 1) : cur + 1;
     render();
+    pop(tile);
+  }
+
+  // Small price bubble that pops up from the tapped item, plus a bump on the totals
+  function bump(el) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  function pop(tile) {
+    var cue = $('add-items-cue');
+    if (cue && window.kkCurrent) { cue.classList.add('done'); $('add-items-text').textContent = 'Keep adding items'; }
+    document.querySelectorAll('.price-pop').forEach(function (o) { o.remove(); });
+    // Phones/tablets: no bubble, the price bar at the bottom updates instead
+    var shell = document.querySelector('.calc-card-shell');
+    var r, edge, gutter = 0;
+    if (window.innerWidth >= 980 && shell) {
+      r = tile.getBoundingClientRect(); edge = shell.getBoundingClientRect().right;
+      gutter = window.innerWidth - edge;
+    }
+    // Only when there's white space beside the calculator, so it never covers anything
+    if (window.innerWidth >= 980 && shell && gutter >= 96) {
+      var el = document.createElement('span');
+      el.className = 'price-pop'; el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = (gutter >= 150 ? '<small>Est.</small> ' : '') + $('price-display').textContent;
+      // Center it in the white space to the right of the calculator
+      el.style.left = (edge + gutter / 2) + 'px';
+      el.style.top = (r.top + r.height / 2) + 'px';
+      document.body.appendChild(el);
+      setTimeout(function () { el.remove(); }, 1300);
+    }
+    bump($('price-display')); bump($('float-price'));
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -630,7 +730,13 @@ grid-template-columns: 1fr 1fr;
     document.querySelectorAll('.tier-pill').forEach(function (p) {
       p.addEventListener('click', function () { state.counts = {}; state.manual = parseFloat(p.dataset.yards); render(); });
     });
-    $('calc-reset').addEventListener('click', function () { state.counts = {}; state.manual = null; render(); });
+    $('calc-reset').addEventListener('click', function () {
+      state.counts = {}; state.manual = null; render();
+      $('add-items-cue').classList.remove('done'); $('add-items-text').textContent = 'Add items';
+    });
+    $('add-items-cue').addEventListener('click', function () {
+      $('items-start').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     // Any link to the quote/booking page carries the calculator selections along
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]');
@@ -644,13 +750,13 @@ grid-template-columns: 1fr 1fr;
     // Floating price bar: shows once something is picked and the main price panel is scrolled out of view
     var floatBar = $('calc-float'), panelSeen = true, ctaSeen = false;
     window.kkFloatSync = function () {
-      var show = !!window.kkCurrent && !panelSeen && !ctaSeen;
+      var show = !!window.kkCurrent && !ctaSeen && (window.innerWidth < 980 || !panelSeen);
       floatBar.hidden = !show;
       document.body.classList.toggle('calc-float-on', show);
     };
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (en) { panelSeen = en[0].isIntersecting; window.kkFloatSync(); })
-        .observe(document.querySelector('.price-readout-panel'));
+      new IntersectionObserver(function (en) { panelSeen = en[0].isIntersecting; window.kkFloatSync(); }, { rootMargin: '-80px 0px 0px 0px' })
+        .observe(document.querySelector('.price-big-wrap'));
       new IntersectionObserver(function (en) { ctaSeen = en[0].isIntersecting; window.kkFloatSync(); })
         .observe($('calc-quote'));
     }
@@ -877,21 +983,20 @@ grid-template-columns: 1fr 1fr;
 <section class="calc-hero-banner">
 <div class="container">
 <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="./">Home</a><span aria-hidden="true">/</span><span>Price Calculator</span></nav>
-<div class="eyebrow">Based on our 16' × 6' × 4' trailer</div>
 <h1>Junk Removal <span class="accent">Price Calculator</span></h1>
-<p>Tap what needs to go and watch our 14-cubic-yard trailer fill up in real time for an instant ballpark estimate.</p>
+<p>Tap what needs to go and watch our 14-cubic-yard trailer fill up for an instant ballpark estimate.</p>
 </div>
 </section>
-<section class="section" style="padding-top:2rem;">
+<section class="section calc-section">
 <div class="container">
 <div class="calc-card-shell">
 <div class="calc-card-top-bar">
-<span class="rig-badge">14 CU. YD. CUSTOM TRAILER (16' × 6' × 4')</span>
-<button type="button" class="calc-reset-btn" id="calc-reset">↺ Reset Trailer</button>
+<span class="rig-badge">14 cu. yd. trailer · 16' × 6' × 4'</span>
+<button type="button" class="calc-reset-btn" id="calc-reset">↺ Reset</button>
 </div>
 <div class="calc-body">
+<div class="calc-left">
 <div class="rig-stage">
-<div class="rig-stage-specs"><span>4x4 Crew Cab Tow Rig</span><span>16' L × 6' W × 4' H (14 Cu. Yds.)</span></div>
 <svg class="rig-svg" viewBox="0 0 820 235" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kazzy and Ko Hauling pickup truck towing 16-foot yellow-walled trailer">
 <defs>
 <linearGradient id="truckBodyGrad" x1="0" y1="0" x2="0" y2="1">
@@ -996,12 +1101,12 @@ grid-template-columns: 1fr 1fr;
 </g>
 </svg>
 </div>
-<div class="load-status-title" id="load-status-title">TAP WHAT NEEDS TO GO</div>
+<div class="load-status-title" id="load-status-title">TRAILER IS EMPTY</div>
 <div class="meter-row">
 <div class="meter-track"><div class="meter-fill" id="meter-fill"></div></div>
 <div class="meter-pct" id="meter-pct">0%</div>
 </div>
-<div class="volume-subtext" id="volume-subtext">Every job is priced by the space it takes in our 14-cubic-yard (16' × 6' × 4') trailer.</div>
+<div class="volume-subtext" id="volume-subtext">Priced by how much of our 14-cubic-yard trailer your items fill.</div>
 <div class="tier-pills-bar" role="group" aria-label="Quick trailer load sizes">
 <button type="button" class="tier-pill" data-yards="2">MIN<br />$125</button>
 <button type="button" class="tier-pill" data-yards="3.5">1/4 LOAD<br />$250</button>
@@ -1010,27 +1115,27 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="tier-pill" data-yards="14">FULL<br />$700</button>
 </div>
 <div class="price-readout-panel">
-<div>
 <div class="price-big-wrap">
 <span class="price-big-number" id="price-display" aria-live="polite">$125</span>
 <span class="price-tier-badge" id="price-tier-badge">STARTING MINIMUM</span>
 </div>
-<div style="font-size:0.82rem;color:var(--gold-200);font-weight:800;margin-top:0.35rem;" id="price-tier-subtitle">1–2 bulky items or a small pickup</div>
-</div>
-<div class="price-fineprint"><strong>Estimate only.</strong> Your final price is set after we load your items and measure how much of the trailer they actually fill. Heavy lifting, donation sorting and a broom sweep are included.</div>
+<div class="price-tier-subtitle" id="price-tier-subtitle">1–2 bulky items or a small pickup</div>
 </div>
 <div class="special-note" id="special-note" hidden>
 <strong>+ Specialty items, priced separately:</strong>
 <span id="special-list"></span>. These are priced by the difficulty of removal, not volume. Text a photo to (414) 388-6289 for a free estimate.
 </div>
-<div class="item-grid-header">
-<h2 class="calc-items-title" style="font-size:1rem;font-weight:900;color:var(--royal-800);text-transform:uppercase;letter-spacing:0.02em;">Tap items to add them to the trailer</h2>
-<span style="font-size:0.78rem;font-weight:700;color:var(--royal-600);">Tap + or − to adjust quantity</span>
 </div>
-<h3 class="item-cat-title">Living room</h3>
+<div class="calc-right">
+<button type="button" class="add-items-cue" id="add-items-cue" aria-controls="items-start"><span id="add-items-text">Add items</span><span class="cue-arrow" aria-hidden="true">↓</span></button>
+<div class="item-grid-header" id="items-start">
+<h2 class="calc-items-title">Tap what needs to go</h2>
+<span class="calc-items-hint">Tap + or − to change the quantity</span>
+</div>
+<h3 class="item-cat-title">Furniture</h3>
 <div class="item-selector-grid">
-<div class="item-tile" data-id="sofa" data-yards="2.2" tabindex="0" role="button" aria-label="Add Couch / sofa">
-<div class="item-tile-info"><div class="item-tile-name">Couch / sofa</div><span class="item-tile-vol">≈ 2.2 cu. yd.</span></div>
+<div class="item-tile" data-id="sofa" data-yards="2.0" tabindex="0" role="button" aria-label="Add Couch / sofa">
+<div class="item-tile-info"><div class="item-tile-name">Couch / sofa</div><span class="item-tile-vol">≈ 2 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Couch / sofa">−</button>
@@ -1038,8 +1143,8 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Couch / sofa">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="loveseat" data-yards="1.7" tabindex="0" role="button" aria-label="Add Loveseat">
-<div class="item-tile-info"><div class="item-tile-name">Loveseat</div><span class="item-tile-vol">≈ 1.7 cu. yd.</span></div>
+<div class="item-tile" data-id="loveseat" data-yards="1.4" tabindex="0" role="button" aria-label="Add Loveseat">
+<div class="item-tile-info"><div class="item-tile-name">Loveseat</div><span class="item-tile-vol">≈ 1.4 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Loveseat">−</button>
@@ -1047,8 +1152,8 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Loveseat">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="sectional" data-yards="4.5" tabindex="0" role="button" aria-label="Add Sectional (3+ pieces)">
-<div class="item-tile-info"><div class="item-tile-name">Sectional (3+ pieces)</div><span class="item-tile-vol">≈ 4.5 cu. yd.</span></div>
+<div class="item-tile" data-id="sectional" data-yards="4.0" tabindex="0" role="button" aria-label="Add Sectional (3+ pieces)">
+<div class="item-tile-info"><div class="item-tile-name">Sectional (3+ pieces)</div><span class="item-tile-vol">≈ 4 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Sectional (3+ pieces)">−</button>
@@ -1056,8 +1161,8 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Sectional (3+ pieces)">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="recliner" data-yards="1.3" tabindex="0" role="button" aria-label="Add Recliner / armchair">
-<div class="item-tile-info"><div class="item-tile-name">Recliner / armchair</div><span class="item-tile-vol">≈ 1.3 cu. yd.</span></div>
+<div class="item-tile" data-id="recliner" data-yards="0.75" tabindex="0" role="button" aria-label="Add Recliner / armchair">
+<div class="item-tile-info"><div class="item-tile-name">Recliner / armchair</div><span class="item-tile-vol">≈ 0.75 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Recliner / armchair">−</button>
@@ -1065,47 +1170,8 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Recliner / armchair">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="coffee_table" data-yards="0.4" tabindex="0" role="button" aria-label="Add Coffee or end table">
-<div class="item-tile-info"><div class="item-tile-name">Coffee or end table</div><span class="item-tile-vol">≈ 0.4 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Coffee or end table">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Coffee or end table">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="tv_stand" data-yards="1.0" tabindex="0" role="button" aria-label="Add TV stand / entertainment center">
-<div class="item-tile-info"><div class="item-tile-name">TV stand / entertainment center</div><span class="item-tile-vol">≈ 1 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one TV stand / entertainment center">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more TV stand / entertainment center">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="bookcase" data-yards="0.7" tabindex="0" role="button" aria-label="Add Bookcase">
-<div class="item-tile-info"><div class="item-tile-name">Bookcase</div><span class="item-tile-vol">≈ 0.7 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Bookcase">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Bookcase">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="rug" data-yards="0.4" tabindex="0" role="button" aria-label="Add Rug or carpet (1 room)">
-<div class="item-tile-info"><div class="item-tile-name">Rug or carpet (1 room)</div><span class="item-tile-vol">≈ 0.4 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Rug or carpet (1 room)">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Rug or carpet (1 room)">+</button>
-</div>
-</div>
-</div>
-<h3 class="item-cat-title">Bedroom</h3>
-<div class="item-selector-grid">
-<div class="item-tile" data-id="mattress" data-yards="1.1" tabindex="0" role="button" aria-label="Add Mattress">
-<div class="item-tile-info"><div class="item-tile-name">Mattress</div><span class="item-tile-vol">≈ 1.1 cu. yd.</span></div>
+<div class="item-tile" data-id="mattress" data-yards="1.0" tabindex="0" role="button" aria-label="Add Mattress">
+<div class="item-tile-info"><div class="item-tile-name">Mattress</div><span class="item-tile-vol">≈ 1 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Mattress">−</button>
@@ -1113,8 +1179,8 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Mattress">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="box_spring" data-yards="0.9" tabindex="0" role="button" aria-label="Add Box spring">
-<div class="item-tile-info"><div class="item-tile-name">Box spring</div><span class="item-tile-vol">≈ 0.9 cu. yd.</span></div>
+<div class="item-tile" data-id="box_spring" data-yards="0.75" tabindex="0" role="button" aria-label="Add Box spring">
+<div class="item-tile-info"><div class="item-tile-name">Box spring</div><span class="item-tile-vol">≈ 0.75 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Box spring">−</button>
@@ -1131,38 +1197,26 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Bed frame / headboard">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="dresser" data-yards="0.8" tabindex="0" role="button" aria-label="Add Dresser">
-<div class="item-tile-info"><div class="item-tile-name">Dresser</div><span class="item-tile-vol">≈ 0.8 cu. yd.</span></div>
+<div class="item-tile" data-id="dresser" data-yards="1.2" tabindex="0" role="button" aria-label="Add Dresser / chest">
+<div class="item-tile-info"><div class="item-tile-name">Dresser / chest</div><span class="item-tile-vol">≈ 1.2 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dresser">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dresser / chest">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dresser">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dresser / chest">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="nightstand" data-yards="0.25" tabindex="0" role="button" aria-label="Add Nightstand">
-<div class="item-tile-info"><div class="item-tile-name">Nightstand</div><span class="item-tile-vol">≈ 0.25 cu. yd.</span></div>
+<div class="item-tile" data-id="small_table" data-yards="0.4" tabindex="0" role="button" aria-label="Add Coffee table / nightstand">
+<div class="item-tile-info"><div class="item-tile-name">Coffee table / nightstand</div><span class="item-tile-vol">≈ 0.4 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Nightstand">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Coffee table / nightstand">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Nightstand">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Coffee table / nightstand">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="crib" data-yards="0.6" tabindex="0" role="button" aria-label="Add Crib">
-<div class="item-tile-info"><div class="item-tile-name">Crib</div><span class="item-tile-vol">≈ 0.6 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Crib">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Crib">+</button>
-</div>
-</div>
-</div>
-<h3 class="item-cat-title">Kitchen & dining</h3>
-<div class="item-selector-grid">
-<div class="item-tile" data-id="dining_table" data-yards="1.2" tabindex="0" role="button" aria-label="Add Dining table">
-<div class="item-tile-info"><div class="item-tile-name">Dining table</div><span class="item-tile-vol">≈ 1.2 cu. yd.</span></div>
+<div class="item-tile" data-id="dining_table" data-yards="1.0" tabindex="0" role="button" aria-label="Add Dining table">
+<div class="item-tile-info"><div class="item-tile-name">Dining table</div><span class="item-tile-vol">≈ 1 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dining table">−</button>
@@ -1170,104 +1224,17 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dining table">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="dining_chair" data-yards="0.3" tabindex="0" role="button" aria-label="Add Dining chair">
-<div class="item-tile-info"><div class="item-tile-name">Dining chair</div><span class="item-tile-vol">≈ 0.3 cu. yd.</span></div>
+<div class="item-tile" data-id="chair" data-yards="0.3" tabindex="0" role="button" aria-label="Add Chair (dining, office, patio)">
+<div class="item-tile-info"><div class="item-tile-name">Chair (dining, office, patio)</div><span class="item-tile-vol">≈ 0.3 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dining chair">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Chair (dining, office, patio)">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dining chair">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Chair (dining, office, patio)">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="microwave" data-yards="0.1" tabindex="0" role="button" aria-label="Add Microwave">
-<div class="item-tile-info"><div class="item-tile-name">Microwave</div><span class="item-tile-vol">≈ 0.1 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Microwave">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Microwave">+</button>
-</div>
-</div>
-</div>
-<h3 class="item-cat-title">Appliances</h3>
-<div class="item-selector-grid">
-<div class="item-tile" data-id="fridge" data-yards="1.6" tabindex="0" role="button" aria-label="Add Refrigerator">
-<div class="item-tile-info"><div class="item-tile-name">Refrigerator</div><span class="item-tile-vol">≈ 1.6 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Refrigerator">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Refrigerator">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="freezer" data-yards="1.0" tabindex="0" role="button" aria-label="Add Freezer">
-<div class="item-tile-info"><div class="item-tile-name">Freezer</div><span class="item-tile-vol">≈ 1 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Freezer">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Freezer">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="washer" data-yards="0.65" tabindex="0" role="button" aria-label="Add Washer">
-<div class="item-tile-info"><div class="item-tile-name">Washer</div><span class="item-tile-vol">≈ 0.65 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Washer">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Washer">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="dryer" data-yards="0.65" tabindex="0" role="button" aria-label="Add Dryer">
-<div class="item-tile-info"><div class="item-tile-name">Dryer</div><span class="item-tile-vol">≈ 0.65 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dryer">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dryer">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="stove" data-yards="0.85" tabindex="0" role="button" aria-label="Add Stove / range">
-<div class="item-tile-info"><div class="item-tile-name">Stove / range</div><span class="item-tile-vol">≈ 0.85 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Stove / range">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Stove / range">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="dishwasher" data-yards="0.45" tabindex="0" role="button" aria-label="Add Dishwasher">
-<div class="item-tile-info"><div class="item-tile-name">Dishwasher</div><span class="item-tile-vol">≈ 0.45 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dishwasher">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dishwasher">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="water_heater" data-yards="0.6" tabindex="0" role="button" aria-label="Add Water heater">
-<div class="item-tile-info"><div class="item-tile-name">Water heater</div><span class="item-tile-vol">≈ 0.6 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Water heater">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Water heater">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="ac_unit" data-yards="0.15" tabindex="0" role="button" aria-label="Add Window AC / dehumidifier">
-<div class="item-tile-info"><div class="item-tile-name">Window AC / dehumidifier</div><span class="item-tile-vol">≈ 0.15 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Window AC / dehumidifier">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Window AC / dehumidifier">+</button>
-</div>
-</div>
-</div>
-<h3 class="item-cat-title">Office & electronics</h3>
-<div class="item-selector-grid">
-<div class="item-tile" data-id="desk" data-yards="1.15" tabindex="0" role="button" aria-label="Add Desk">
-<div class="item-tile-info"><div class="item-tile-name">Desk</div><span class="item-tile-vol">≈ 1.15 cu. yd.</span></div>
+<div class="item-tile" data-id="desk" data-yards="0.75" tabindex="0" role="button" aria-label="Add Desk">
+<div class="item-tile-info"><div class="item-tile-name">Desk</div><span class="item-tile-vol">≈ 0.75 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Desk">−</button>
@@ -1275,47 +1242,77 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Desk">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="office_chair" data-yards="0.5" tabindex="0" role="button" aria-label="Add Office chair">
-<div class="item-tile-info"><div class="item-tile-name">Office chair</div><span class="item-tile-vol">≈ 0.5 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Office chair">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Office chair">+</button>
 </div>
-</div>
-<div class="item-tile" data-id="file_cabinet" data-yards="0.45" tabindex="0" role="button" aria-label="Add Filing cabinet">
-<div class="item-tile-info"><div class="item-tile-name">Filing cabinet</div><span class="item-tile-vol">≈ 0.45 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Filing cabinet">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Filing cabinet">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="tv" data-yards="0.3" tabindex="0" role="button" aria-label="Add TV / monitor">
-<div class="item-tile-info"><div class="item-tile-name">TV / monitor</div><span class="item-tile-vol">≈ 0.3 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one TV / monitor">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more TV / monitor">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="computer" data-yards="0.15" tabindex="0" role="button" aria-label="Add Computer / printer">
-<div class="item-tile-info"><div class="item-tile-name">Computer / printer</div><span class="item-tile-vol">≈ 0.15 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Computer / printer">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Computer / printer">+</button>
-</div>
-</div>
-</div>
-<h3 class="item-cat-title">Garage & outdoor</h3>
+<h3 class="item-cat-title">Appliances & electronics</h3>
 <div class="item-selector-grid">
-<div class="item-tile" data-id="grill" data-yards="0.9" tabindex="0" role="button" aria-label="Add Grill">
-<div class="item-tile-info"><div class="item-tile-name">Grill</div><span class="item-tile-vol">≈ 0.9 cu. yd.</span></div>
+<div class="item-tile" data-id="fridge" data-yards="1.75" tabindex="0" role="button" aria-label="Add Refrigerator / freezer">
+<div class="item-tile-info"><div class="item-tile-name">Refrigerator / freezer</div><span class="item-tile-vol">≈ 1.75 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Refrigerator / freezer">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Refrigerator / freezer">+</button>
+</div>
+</div>
+<div class="item-tile" data-id="washer_dryer" data-yards="0.85" tabindex="0" role="button" aria-label="Add Washer or dryer">
+<div class="item-tile-info"><div class="item-tile-name">Washer or dryer</div><span class="item-tile-vol">≈ 0.85 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Washer or dryer">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Washer or dryer">+</button>
+</div>
+</div>
+<div class="item-tile" data-id="stove" data-yards="1.0" tabindex="0" role="button" aria-label="Add Stove / range">
+<div class="item-tile-info"><div class="item-tile-name">Stove / range</div><span class="item-tile-vol">≈ 1 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Stove / range">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Stove / range">+</button>
+</div>
+</div>
+<div class="item-tile" data-id="dishwasher" data-yards="0.75" tabindex="0" role="button" aria-label="Add Dishwasher">
+<div class="item-tile-info"><div class="item-tile-name">Dishwasher</div><span class="item-tile-vol">≈ 0.75 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Dishwasher">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dishwasher">+</button>
+</div>
+</div>
+<div class="item-tile" data-id="water_heater" data-yards="0.5" tabindex="0" role="button" aria-label="Add Water heater">
+<div class="item-tile-info"><div class="item-tile-name">Water heater</div><span class="item-tile-vol">≈ 0.5 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Water heater">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Water heater">+</button>
+</div>
+</div>
+<div class="item-tile" data-id="tv" data-yards="0.4" tabindex="0" role="button" aria-label="Add TV">
+<div class="item-tile-info"><div class="item-tile-name">TV</div><span class="item-tile-vol">≈ 0.4 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one TV">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more TV">+</button>
+</div>
+</div>
+</div>
+<h3 class="item-cat-title">Garage, outdoor & bags</h3>
+<div class="item-selector-grid">
+<div class="item-tile" data-id="bookcase" data-yards="0.9" tabindex="0" role="button" aria-label="Add Bookcase / shelving / TV stand">
+<div class="item-tile-info"><div class="item-tile-name">Bookcase / shelving / TV stand</div><span class="item-tile-vol">≈ 0.9 cu. yd.</span></div>
+<span class="item-plus-only" aria-hidden="true">+</span>
+<div class="item-counter-controls">
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Bookcase / shelving / TV stand">−</button>
+<span class="qty-count-display">0</span>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Bookcase / shelving / TV stand">+</button>
+</div>
+</div>
+<div class="item-tile" data-id="grill" data-yards="1.0" tabindex="0" role="button" aria-label="Add Grill">
+<div class="item-tile-info"><div class="item-tile-name">Grill</div><span class="item-tile-vol">≈ 1 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Grill">−</button>
@@ -1323,8 +1320,8 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Grill">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="mower" data-yards="0.4" tabindex="0" role="button" aria-label="Add Lawn mower">
-<div class="item-tile-info"><div class="item-tile-name">Lawn mower</div><span class="item-tile-vol">≈ 0.4 cu. yd.</span></div>
+<div class="item-tile" data-id="mower" data-yards="0.5" tabindex="0" role="button" aria-label="Add Lawn mower">
+<div class="item-tile-info"><div class="item-tile-name">Lawn mower</div><span class="item-tile-vol">≈ 0.5 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
 <button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Lawn mower">−</button>
@@ -1341,76 +1338,28 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Bicycle">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="patio_table" data-yards="0.6" tabindex="0" role="button" aria-label="Add Patio table">
-<div class="item-tile-info"><div class="item-tile-name">Patio table</div><span class="item-tile-vol">≈ 0.6 cu. yd.</span></div>
+<div class="item-tile" data-id="trash_bag" data-yards="0.25" tabindex="0" role="button" aria-label="Add Large trash bag">
+<div class="item-tile-info"><div class="item-tile-name">Large trash bag</div><span class="item-tile-vol">≈ 0.25 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Patio table">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Large trash bag">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Patio table">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Large trash bag">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="patio_chair" data-yards="0.3" tabindex="0" role="button" aria-label="Add Patio chair">
-<div class="item-tile-info"><div class="item-tile-name">Patio chair</div><span class="item-tile-vol">≈ 0.3 cu. yd.</span></div>
+<div class="item-tile" data-id="box" data-yards="0.15" tabindex="0" role="button" aria-label="Add Box or storage tote">
+<div class="item-tile-info"><div class="item-tile-name">Box or storage tote</div><span class="item-tile-vol">≈ 0.15 cu. yd.</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Patio chair">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Box or storage tote">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Patio chair">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="tire" data-yards="0.15" tabindex="0" role="button" aria-label="Add Tire">
-<div class="item-tile-info"><div class="item-tile-name">Tire</div><span class="item-tile-vol">≈ 0.15 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Tire">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Tire">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="shelving" data-yards="0.4" tabindex="0" role="button" aria-label="Add Metal shelving unit">
-<div class="item-tile-info"><div class="item-tile-name">Metal shelving unit</div><span class="item-tile-vol">≈ 0.4 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Metal shelving unit">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Metal shelving unit">+</button>
-</div>
-</div>
-</div>
-<h3 class="item-cat-title">Bags & boxes</h3>
-<div class="item-selector-grid">
-<div class="item-tile" data-id="trash_bag" data-yards="0.15" tabindex="0" role="button" aria-label="Add Trash bag (large)">
-<div class="item-tile-info"><div class="item-tile-name">Trash bag (large)</div><span class="item-tile-vol">≈ 0.15 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Trash bag (large)">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Trash bag (large)">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="box" data-yards="0.1" tabindex="0" role="button" aria-label="Add Moving box (medium)">
-<div class="item-tile-info"><div class="item-tile-name">Moving box (medium)</div><span class="item-tile-vol">≈ 0.1 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Moving box (medium)">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Moving box (medium)">+</button>
-</div>
-</div>
-<div class="item-tile" data-id="tote" data-yards="0.13" tabindex="0" role="button" aria-label="Add Storage tote / bin">
-<div class="item-tile-info"><div class="item-tile-name">Storage tote / bin</div><span class="item-tile-vol">≈ 0.13 cu. yd.</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove one Storage tote / bin">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Storage tote / bin">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Box or storage tote">+</button>
 </div>
 </div>
 </div>
 
 <h3 class="item-cat-title" id="specialty">Specialty items (priced separately)</h3>
-<p class="special-intro">Some items aren't priced by volume because of their weight or how hard they are to remove. Pianos, pool tables, heavy sleeper sofas, heavy-duty exercise equipment, hot tubs, safes, cast-iron tubs and radiators, and dense materials like dirt, rocks, concrete, brick, shingles and construction debris are priced separately based on the difficulty of removal.</p>
+<p class="special-intro">These are priced by their weight and how hard they are to remove, not by trailer space. Add them here and we'll include them in your estimate.</p>
 <div class="item-selector-grid">
 <div class="item-tile special" data-id="piano" data-special="1" data-name="Piano or organ" tabindex="0" role="button" aria-label="Add Piano or organ">
 <div class="item-tile-info"><div class="item-tile-name">Piano or organ</div><span class="item-tile-vol">Priced separately</span></div>
@@ -1439,13 +1388,13 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Sleeper sofa">+</button>
 </div>
 </div>
-<div class="item-tile special" data-id="gym" data-special="1" data-name="Treadmill / home gym / weights" tabindex="0" role="button" aria-label="Add Treadmill / home gym / weights">
-<div class="item-tile-info"><div class="item-tile-name">Treadmill / home gym / weights</div><span class="item-tile-vol">Priced separately</span></div>
+<div class="item-tile special" data-id="gym" data-special="1" data-name="Treadmill / home gym" tabindex="0" role="button" aria-label="Add Treadmill / home gym">
+<div class="item-tile-info"><div class="item-tile-name">Treadmill / home gym</div><span class="item-tile-vol">Priced separately</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Treadmill / home gym / weights">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Treadmill / home gym">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Treadmill / home gym / weights">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Treadmill / home gym">+</button>
 </div>
 </div>
 <div class="item-tile special" data-id="hot_tub" data-special="1" data-name="Hot tub" tabindex="0" role="button" aria-label="Add Hot tub">
@@ -1457,53 +1406,36 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Hot tub">+</button>
 </div>
 </div>
-<div class="item-tile special" data-id="safe" data-special="1" data-name="Safe" tabindex="0" role="button" aria-label="Add Safe">
-<div class="item-tile-info"><div class="item-tile-name">Safe</div><span class="item-tile-vol">Priced separately</span></div>
+<div class="item-tile special" data-id="safe" data-special="1" data-name="Safe, cast-iron tub, radiator" tabindex="0" role="button" aria-label="Add Safe, cast-iron tub, radiator">
+<div class="item-tile-info"><div class="item-tile-name">Safe, cast-iron tub, radiator</div><span class="item-tile-vol">Priced separately</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Safe">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Safe, cast-iron tub, radiator">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Safe">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Safe, cast-iron tub, radiator">+</button>
 </div>
 </div>
-<div class="item-tile special" data-id="cast_iron" data-special="1" data-name="Cast-iron tub or radiator" tabindex="0" role="button" aria-label="Add Cast-iron tub or radiator">
-<div class="item-tile-info"><div class="item-tile-name">Cast-iron tub or radiator</div><span class="item-tile-vol">Priced separately</span></div>
+<div class="item-tile special" data-id="dirt" data-special="1" data-name="Dirt, rock, concrete, shingles" tabindex="0" role="button" aria-label="Add Dirt, rock, concrete, shingles">
+<div class="item-tile-info"><div class="item-tile-name">Dirt, rock, concrete, shingles</div><span class="item-tile-vol">Priced separately</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Cast-iron tub or radiator">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Dirt, rock, concrete, shingles">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Cast-iron tub or radiator">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Dirt, rock, concrete, shingles">+</button>
 </div>
 </div>
-<div class="item-tile special" data-id="dirt" data-special="1" data-name="Dirt, rocks, concrete or brick" tabindex="0" role="button" aria-label="Add Dirt, rocks, concrete or brick">
-<div class="item-tile-info"><div class="item-tile-name">Dirt, rocks, concrete or brick</div><span class="item-tile-vol">Priced separately</span></div>
+<div class="item-tile special" data-id="construction" data-special="1" data-name="Construction debris" tabindex="0" role="button" aria-label="Add Construction debris">
+<div class="item-tile-info"><div class="item-tile-name">Construction debris</div><span class="item-tile-vol">Priced separately</span></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Dirt, rocks, concrete or brick">−</button>
+<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Construction debris">−</button>
 <span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Dirt, rocks, concrete or brick">+</button>
-</div>
-</div>
-<div class="item-tile special" data-id="shingles" data-special="1" data-name="Roofing shingles" tabindex="0" role="button" aria-label="Add Roofing shingles">
-<div class="item-tile-info"><div class="item-tile-name">Roofing shingles</div><span class="item-tile-vol">Priced separately</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Roofing shingles">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Roofing shingles">+</button>
-</div>
-</div>
-<div class="item-tile special" data-id="construction" data-special="1" data-name="Construction debris (drywall, tile, plaster)" tabindex="0" role="button" aria-label="Add Construction debris (drywall, tile, plaster)">
-<div class="item-tile-info"><div class="item-tile-name">Construction debris (drywall, tile, plaster)</div><span class="item-tile-vol">Priced separately</span></div>
-<span class="item-plus-only" aria-hidden="true">+</span>
-<div class="item-counter-controls">
-<button type="button" class="qty-btn qty-btn-minus" data-action="minus" aria-label="Remove Construction debris (drywall, tile, plaster)">−</button>
-<span class="qty-count-display">0</span>
-<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Construction debris (drywall, tile, plaster)">+</button>
+<button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add another Construction debris">+</button>
 </div>
 </div>
 </div>
-<div class="calc-cta-grid" style="margin-top:1.5rem;">
+<p class="calc-fineprint"><strong>Estimate only.</strong> Your final price is set after we load your items and see how much of the trailer they actually fill. Heavy lifting, donation sorting and a broom sweep are included.</p>
+<div class="calc-cta-grid">
 <a href="tel:+14143886289" class="btn btn-outline btn-block">📞 Call (414) 388-6289</a>
 <a href="schedule-a-pickup.html?from=calculator#quote-form" id="calc-quote" class="btn btn-primary btn-block">Get My Free Estimate →</a>
 </div>
@@ -1512,11 +1444,12 @@ grid-template-columns: 1fr 1fr;
 </div>
 </div>
 </div>
+</div>
 <p class="payment-disclaimer">We accept cash, card and check. A 3% fee applies to electronic payments.</p>
 <div class="calc-howto">
 <div class="info-card">
 <h3>How the estimate works</h3>
-<p>Each item has a typical size in cubic yards, based on its common dimensions (a 7-foot sofa takes up about 2.2). We add them up and price the total against our load sizes. If it lands in between, the price lands in between too.</p>
+<p>Each item has an average size in cubic yards, based on standard moving-industry size charts and real junk removal loads (a full-size sofa takes up about 2). We add them up and price the total against our load sizes. If it lands in between, the price lands in between too.</p>
 <ul class="check-list" style="margin-bottom:0.75rem;">
 <li><strong>$125</strong> minimum: 1–2 bulky items or up to 2 cu. yd.</li>
 <li><strong>$250</strong> at 1/4 load (3.5 cu. yd.)</li>
@@ -1529,9 +1462,9 @@ grid-template-columns: 1fr 1fr;
 <div class="info-card">
 <h3>Item sizes we use</h3>
 <details><summary style="cursor:pointer;font-weight:700;color:var(--royal-700);">Show the cubic-yard list</summary>
-<table class="size-table" style="width:100%;margin-top:0.75rem;font-size:0.9rem;border-collapse:collapse;"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:left;">Cu. yd.</th></tr></thead><tbody><tr><td>Couch / sofa</td><td>2.2</td></tr><tr><td>Loveseat</td><td>1.7</td></tr><tr><td>Sectional (3+ pieces)</td><td>4.5</td></tr><tr><td>Recliner / armchair</td><td>1.3</td></tr><tr><td>Coffee or end table</td><td>0.4</td></tr><tr><td>TV stand / entertainment center</td><td>1</td></tr><tr><td>Bookcase</td><td>0.7</td></tr><tr><td>Rug or carpet (1 room)</td><td>0.4</td></tr><tr><td>Mattress</td><td>1.1</td></tr><tr><td>Box spring</td><td>0.9</td></tr><tr><td>Bed frame / headboard</td><td>0.5</td></tr><tr><td>Dresser</td><td>0.8</td></tr><tr><td>Nightstand</td><td>0.25</td></tr><tr><td>Crib</td><td>0.6</td></tr><tr><td>Dining table</td><td>1.2</td></tr><tr><td>Dining chair</td><td>0.3</td></tr><tr><td>Microwave</td><td>0.1</td></tr><tr><td>Refrigerator</td><td>1.6</td></tr><tr><td>Freezer</td><td>1</td></tr><tr><td>Washer</td><td>0.65</td></tr><tr><td>Dryer</td><td>0.65</td></tr><tr><td>Stove / range</td><td>0.85</td></tr><tr><td>Dishwasher</td><td>0.45</td></tr><tr><td>Water heater</td><td>0.6</td></tr><tr><td>Window AC / dehumidifier</td><td>0.15</td></tr><tr><td>Desk</td><td>1.15</td></tr><tr><td>Office chair</td><td>0.5</td></tr><tr><td>Filing cabinet</td><td>0.45</td></tr><tr><td>TV / monitor</td><td>0.3</td></tr><tr><td>Computer / printer</td><td>0.15</td></tr><tr><td>Grill</td><td>0.9</td></tr><tr><td>Lawn mower</td><td>0.4</td></tr><tr><td>Bicycle</td><td>0.5</td></tr><tr><td>Patio table</td><td>0.6</td></tr><tr><td>Patio chair</td><td>0.3</td></tr><tr><td>Tire</td><td>0.15</td></tr><tr><td>Metal shelving unit</td><td>0.4</td></tr><tr><td>Trash bag (large)</td><td>0.15</td></tr><tr><td>Moving box (medium)</td><td>0.1</td></tr><tr><td>Storage tote / bin</td><td>0.13</td></tr></tbody></table>
+<table class="size-table" style="width:100%;margin-top:0.75rem;font-size:0.9rem;border-collapse:collapse;"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:left;">Cu. yd.</th></tr></thead><tbody><tr><td>Couch / sofa</td><td>2</td></tr><tr><td>Loveseat</td><td>1.4</td></tr><tr><td>Sectional (3+ pieces)</td><td>4</td></tr><tr><td>Recliner / armchair</td><td>0.75</td></tr><tr><td>Mattress</td><td>1</td></tr><tr><td>Box spring</td><td>0.75</td></tr><tr><td>Bed frame / headboard</td><td>0.5</td></tr><tr><td>Dresser / chest</td><td>1.2</td></tr><tr><td>Coffee table / nightstand</td><td>0.4</td></tr><tr><td>Dining table</td><td>1</td></tr><tr><td>Chair (dining, office, patio)</td><td>0.3</td></tr><tr><td>Desk</td><td>0.75</td></tr><tr><td>Refrigerator / freezer</td><td>1.75</td></tr><tr><td>Washer or dryer</td><td>0.85</td></tr><tr><td>Stove / range</td><td>1</td></tr><tr><td>Dishwasher</td><td>0.75</td></tr><tr><td>Water heater</td><td>0.5</td></tr><tr><td>TV</td><td>0.4</td></tr><tr><td>Bookcase / shelving / TV stand</td><td>0.9</td></tr><tr><td>Grill</td><td>1</td></tr><tr><td>Lawn mower</td><td>0.5</td></tr><tr><td>Bicycle</td><td>0.5</td></tr><tr><td>Large trash bag</td><td>0.25</td></tr><tr><td>Box or storage tote</td><td>0.15</td></tr></tbody></table>
 </details>
-<p style="margin-top:1rem;">Real loads vary. Things like boxes and bags fill gaps, and odd shapes take more room. That's why the final price is based on the space your items actually take once they're loaded.</p>
+<p style="margin-top:1rem;"><strong>Real loads vary.</strong> These are average sizes, and the actual cubic yards can be bigger or smaller depending on the size of each item. Some desks are small writing desks and others are large L-shaped office desks, a king mattress takes more room than a twin, and a side-by-side fridge is bigger than an apartment one. Boxes and bags also fill gaps, while odd shapes take more room. That's why your final price is based on the space your items actually take once they're loaded.</p>
 </div>
 </div>
 </div>

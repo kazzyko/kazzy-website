@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<p class="estimate-modal-price"></p>' +
       '<p class="estimate-modal-load"></p>' +
       '<p class="estimate-modal-note"><strong>This is an estimate, not a final price.</strong> Your final price is set on the day of the job, after we load your items and measure how much of the trailer they actually fill.</p>' +
-      '<button type="button" class="btn btn-primary btn-block">Continue to my quote request</button>' +
+      '<button type="button" class="btn btn-primary btn-block">Continue to my estimate request</button>' +
       '</div>';
     wrap.querySelector('.estimate-modal-price').textContent = est.price;
     wrap.querySelector('.estimate-modal-load').textContent = est.label + (est.special && est.special.length ? ' + specialty items quoted separately' : '');
@@ -150,12 +150,24 @@ document.addEventListener('DOMContentLoaded', function () {
     if (est) {
       var desc = $('#job_description');
       var list = (est.items || []).concat((est.special || []).map(function (s) { return s + ' (specialty item)'; }));
-      if (desc && !desc.value && list.length) desc.value = 'Items from the price calculator:\n- ' + list.join('\n- ') + '\n\n';
+      var filled = '';
+      if (desc && !desc.value && list.length) { filled = 'Items from the price calculator:\n- ' + list.join('\n- ') + '\n\n'; desc.value = filled; }
       $('[name="estimated_price"]').value = est.price + ' (' + est.label + ', about ' + est.yards + ' cu. yd.)';
       $('[name="calculator_items"]').value = list.join('; ');
       var banner = $('.estimate-banner');
       banner.hidden = false;
       banner.querySelector('.estimate-banner-price').textContent = est.price + ' · ' + est.label;
+      // Let people remove a calculator estimate they don't want anymore
+      var clearBtn = banner.querySelector('.estimate-clear');
+      if (clearBtn) clearBtn.addEventListener('click', function () {
+        store.del('kk-calc'); store.del('kk-calc-new');
+        est = null;
+        banner.hidden = true;
+        $('[name="estimated_price"]').value = '';
+        $('[name="calculator_items"]').value = '';
+        if (desc && filled && desc.value.indexOf(filled) === 0) desc.value = desc.value.slice(filled.length);
+        if (window.kkMiniReset) window.kkMiniReset();
+      });
       // Show the price popup once for each new calculator estimate, whichever button brought them here
       var fresh = false; try { fresh = sessionStorage.getItem('kk-calc-new') === '1'; } catch (e) {}
       if ((fresh || /[?&]from=calculator/.test(location.search)) && !window.__kkModalShown) {
@@ -170,8 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // and for demolition or specialty jobs, which aren't priced by trailer space.
     var mini = form.querySelector('.mini-calc');
     if (mini) {
-      if (est) { mini.hidden = true; }
-      else {
+      {
         var miniRes = mini.querySelector('.mini-calc-result');
         var priceField = $('[name="estimated_price"]');
         mini.addEventListener('change', function (e) {
@@ -184,13 +195,14 @@ document.addEventListener('DOMContentLoaded', function () {
         var syncMini = function () {
           var o = service.options[service.selectedIndex];
           var off = !!(o && o.dataset.nomini);
-          mini.hidden = off;
+          mini.hidden = off || !!est;
           if (off) {
             Array.prototype.forEach.call(mini.querySelectorAll('input[name="load_size"]'), function (i) { i.checked = false; });
             miniRes.hidden = true; priceField.value = '';
           }
         };
         service.addEventListener('change', syncMini); syncMini();
+        window.kkMiniReset = syncMini;
       }
     }
 
