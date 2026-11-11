@@ -227,6 +227,37 @@ strong { font-weight: 700; }
 .hero-contact { margin-bottom: 1.75rem; }
 @media (max-width: 420px) { .hero-actions-2 { grid-template-columns: 1fr; } }
 
+/* Home hero on phones: headline, short pitch and both main buttons on the first screen */
+@media (max-width: 640px) {
+  .hero-home { padding-top: 1.4rem; padding-bottom: 2rem; }
+  .hero-home .eyebrow { font-size: 0.7rem; padding: 0.35rem 0.75rem; margin-bottom: 0.8rem; }
+  .hero-home h1 { font-size: 1.85rem; line-height: 1.12; margin-bottom: 0.75rem; }
+  .hero-home .hero-lead { font-size: 1rem; line-height: 1.5; margin-bottom: 1.1rem; }
+  .hero-home .lead-more { display: none; }
+  .hero-home .hero-actions-2 { grid-template-columns: 1fr; gap: 0.6rem; margin-bottom: 0.6rem; }
+  .hero-home .hero-actions-2 .btn { padding-top: 0.8rem; padding-bottom: 0.8rem; }
+  .hero-home .hero-contact { grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem; }
+  .hero-home .call-num { display: none; }
+}
+.hero-home .call-now { display: none; }
+@media (max-width: 640px) { .hero-home .call-now { display: inline; } }
+/* Schedule page: short header, form pulled up so it starts on the first screen */
+.hero-schedule { padding: 2rem 0 5.5rem; }
+.hero-schedule .hero-lead { margin-bottom: 0; }
+.hero-schedule .hero-phone { color: var(--gold-300); font-weight: 800; white-space: nowrap; text-decoration: none; }
+.section.schedule-body { padding-top: 0; }
+.section.schedule-body .hero-grid { margin-top: -4rem; position: relative; z-index: 2; }
+@media (max-width: 640px) {
+  .hero-schedule { padding: 1.1rem 0 4.25rem; }
+  .hero-schedule .breadcrumbs { margin-bottom: 0.6rem; font-size: 0.85rem; }
+  .hero-schedule .eyebrow { font-size: 0.68rem; padding: 0.3rem 0.7rem; margin-bottom: 0.65rem; }
+  .hero-schedule h1 { font-size: 1.7rem; line-height: 1.12; margin-bottom: 0.6rem; }
+  .hero-schedule .hero-lead { font-size: 0.98rem; line-height: 1.5; }
+  .section.schedule-body .hero-grid { margin-top: -3rem; }
+  .schedule-body .quote-card-header { padding: 1rem 1.15rem; }
+  .schedule-body .quote-card-header h2 { font-size: 1.3rem; }
+  .schedule-body .quote-card-header p { font-size: 0.85rem; }
+}
 .hero-points { display: grid; gap: 0.45rem; margin-bottom: 1.75rem; color: #e6efff; font-weight: 600; font-size: 0.95rem; }
 .hero-points li::before { content: "✓"; color: var(--gold-300); font-weight: 900; margin-right: 0.55rem; }
 

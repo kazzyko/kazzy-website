@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Let people know a text is coming
     var micro = form.querySelector('.form-microcopy');
     if (micro && !form.querySelector('.text-notice')) {
-      micro.insertAdjacentHTML('beforebegin', '<p class="form-microcopy text-notice">By submitting, you agree we can text you at the number above about your request.</p>');
+      micro.insertAdjacentHTML('beforebegin', '<p class="form-microcopy text-notice">By submitting, you agree we can call or text you at the number above about your request.</p>');
     }
 
     // Calculator hand-off
@@ -183,8 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         var syncMini = function () {
           var o = service.options[service.selectedIndex];
-          var group = (o && o.parentNode && o.parentNode.label) || '';
-          var off = group === 'Light Demolition' || group === 'Specialty Items';
+          var off = !!(o && o.dataset.nomini);
           mini.hidden = off;
           if (off) {
             Array.prototype.forEach.call(mini.querySelectorAll('input[name="load_size"]'), function (i) { i.checked = false; });
@@ -208,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return field;
     };
     var locHidden = chipsToField('data-loc', 'item_location');
-    chipsToField('data-access', 'access_notes');
     var syncLoc = function () {
       var other = form.querySelector('input[data-loc][value="Other"]');
       var show = !!(other && other.checked);
@@ -272,8 +270,19 @@ document.addEventListener('DOMContentLoaded', function () {
     dateIn.addEventListener('change', loadSlots);
     syncBooking();
 
+    // Unique email subject per lead so Gmail doesn't stack them into one thread
+    var subjectField = $('[name="subject"]');
+    var setSubject = function (how) {
+      if (!subjectField) return;
+      var nm = ($('#full_name') && $('#full_name').value.trim()) || 'Website lead';
+      var svc = service && service.value ? service.value : 'Service not picked';
+      var d = new Date();
+      var stamp = d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      subjectField.value = 'New lead: ' + nm + ' – ' + svc + ' – ' + how + ' (' + stamp + ')';
+    };
     form.addEventListener('submit', function (e) {
       err.hidden = true;
+      setSubject('Call to schedule');
       if (!locHidden.value) {
         e.preventDefault();
         locField.classList.add('has-error');
@@ -294,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
           name: v('#full_name'), phone: v('#phone'), email: v('#email'), address: v('#service_address'),
           service: v('#service_type'), date: v('#booking_date'), slot: slotField.value.split('|')[0],
           location: v('[name="item_location"]') + (v('#item_location_other') ? ': ' + v('#item_location_other') : ''),
-          details: v('#job_description') + (v('[name="access_notes"]') ? '\nAccess: ' + v('[name="access_notes"]') : ''), estimate: v('[name="estimated_price"]'), hp: v('[name="bot-field"]')
+          details: v('#job_description'), estimate: v('[name="estimated_price"]'), hp: v('[name="bot-field"]')
         })
       })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
@@ -306,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
           }
           status.value = 'Booked online: ' + res.d.when;
+          setSubject('Booked ' + res.d.when);
           store.set('kk-booking', { when: res.d.when });
           HTMLFormElement.prototype.submit.call(form); // send the details to Netlify too
         })
