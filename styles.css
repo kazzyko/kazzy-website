@@ -705,3 +705,21 @@ textarea.form-control { min-height: 96px; resize: vertical; }
 .estimate-modal-price { font-family: var(--font-display); font-weight: 900; font-size: clamp(3rem, 14vw, 4.5rem); line-height: 1; color: var(--royal-700); margin: 0.4rem 0 0.5rem; }
 .estimate-modal-load { font-weight: 700; color: var(--royal-900); margin-bottom: 1rem; }
 .estimate-modal-note { font-size: 0.92rem; color: var(--body); background: var(--gold-100); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1.25rem; text-align: left; }
+
+/* ---- Accessibility touch-ups ---- */
+.stars { color: var(--gold-700); }
+.kicker { color: var(--gold-700); }
+.form-control:focus-visible { outline: 3px solid var(--gold-400); outline-offset: 2px; }
+.slot:disabled { color: #5f6b82; border-color: #d3dae6; }
+.size-chip:has(input:checked)::after { content: "✓"; position: absolute; top: 0.3rem; right: 0.45rem; width: 18px; height: 18px; border-radius: 50%; background: var(--royal-600); color: #fff; font-size: 0.7rem; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.size-chip:has(input:checked) .size-chip-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.photo-frame picture { display: contents; }
+
+/* Service Areas menu: counties, then cities in two columns */
+.dropdown-label { display: block; margin: 0.5rem 0.85rem 0.2rem; padding-top: 0.55rem; border-top: 1px solid #e3eaf7; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.dropdown-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.dropdown-grid a { padding: 0.45rem 0.85rem; font-size: 0.86rem; }
+.drawer-group > a.drawer-sub { padding-left: 2.1rem; font-size: 0.9rem; color: #c3d3ee; }
+.footer-areas p a { color: #c9d6f0; text-decoration: underline; text-underline-offset: 2px; }
+.footer-areas p a:hover { color: var(--gold-200); }
+.drawer-sublabel { display: block; padding: 0.7rem 0.9rem 0.3rem 1.4rem; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-300); }

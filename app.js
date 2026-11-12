@@ -257,6 +257,19 @@ document.addEventListener('DOMContentLoaded', function () {
             grid.appendChild(b);
           });
           if (!any) grid.insertAdjacentHTML('beforeend', '<p class="slot-msg">No open times that day. Try another date.</p>');
+          // Arrow keys move between open time slots, like a normal radio group
+          var open = Array.prototype.slice.call(grid.querySelectorAll('.slot:not(:disabled)'));
+          open.forEach(function (b, i) {
+            b.tabIndex = i === 0 ? 0 : -1;
+            b.addEventListener('keydown', function (e) {
+              var step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+              if (!step) return;
+              e.preventDefault();
+              var next = open[(i + step + open.length) % open.length];
+              open.forEach(function (x) { x.tabIndex = -1; });
+              next.tabIndex = 0; next.focus(); next.click();
+            });
+          });
         })
         .catch(function () {
           bookingOff = true;
