@@ -1,26 +1,28 @@
-// Returns the business's live Google rating and review count.
+// Returns the business's live Google rating, review count and up to 5 recent reviews
+// (reviewer name, stars, text) for the homepage review cards and review pop-up.
 //
 // Netlify environment variables:
 //   GOOGLE_PLACES_API_KEY  (required)
 //   GOOGLE_PLACE_ID        (optional: if blank, the listing is found by name)
-//   GOOGLE_PLACE_QUERY     (optional: search text, default "Kazzy & Ko Hauling Milwaukee WI")
+//   GOOGLE_PLACE_QUERY     (optional: search text, default "Kazzy & Ko. Hauling Milwaukee WI")
 //
 // The answer is cached on Netlify's CDN for a day, so Google is asked about once a day.
 
 const ONE_DAY = 86400;
 const NAME_MATCH = "kazzy";
+const FIELDS = ["id", "displayName", "rating", "userRatingCount", "reviews", "googleMapsUri"];
 
 export default async () => {
   const key = process.env.GOOGLE_PLACES_API_KEY;
   const placeId = (process.env.GOOGLE_PLACE_ID || "").trim();
-  const query = process.env.GOOGLE_PLACE_QUERY || "Kazzy & Ko Hauling Milwaukee WI";
+  const query = process.env.GOOGLE_PLACE_QUERY || "Kazzy & Ko. Hauling Milwaukee WI";
   if (!key) return reply({ error: "not configured" }, 500, 300);
 
   try {
     let place;
     if (placeId) {
       const res = await fetch(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`, {
-        headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": "id,displayName,rating,userRatingCount" },
+        headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": FIELDS.join(",") },
       });
       if (!res.ok) return reply({ error: `google ${res.status}` }, 502, 900);
       place = await res.json();
@@ -30,7 +32,7 @@ export default async () => {
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": key,
-          "X-Goog-FieldMask": "places.id,places.displayName,places.rating,places.userRatingCount",
+          "X-Goog-FieldMask": FIELDS.map((f) => "places." + f).join(","),
         },
         body: JSON.stringify({ textQuery: query, pageSize: 5 }),
       });
@@ -40,11 +42,24 @@ export default async () => {
       if (!place) return reply({ error: "listing not found", searched: query }, 502, 900);
     }
     if (typeof place.userRatingCount !== "number") return reply({ error: "no data" }, 502, 900);
+
+    // Reviews as Google returns them (its "most relevant" five), with the reviewer's name as shown on Google.
+    const reviews = (place.reviews || [])
+      .map((r) => ({
+        name: (r.authorAttribution?.displayName || "").trim(),
+        rating: r.rating,
+        text: (r.originalText?.text || r.text?.text || "").trim(),
+        when: r.relativePublishTimeDescription || "",
+      }))
+      .filter((r) => r.name && r.text && typeof r.rating === "number");
+
     return reply({
       rating: place.rating,
       count: place.userRatingCount,
       name: place.displayName?.text,
       placeId: place.id,
+      mapsUri: place.googleMapsUri,
+      reviews,
     }, 200, ONE_DAY);
   } catch {
     return reply({ error: "fetch failed" }, 502, 900);

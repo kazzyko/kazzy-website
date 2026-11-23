@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.setAttribute('aria-expanded', String(open));
       drawer.classList.toggle('open', open);
       btn.querySelector('.label').textContent = open ? 'Close' : 'Menu';
-      btn.querySelector('.icon').textContent = open ? '✕' : '☰';
     };
     btn.addEventListener('click', function () {
       setOpen(btn.getAttribute('aria-expanded') !== 'true');
@@ -44,6 +43,17 @@ document.addEventListener('DOMContentLoaded', function () {
       if (e.key === 'Escape' && drawer.classList.contains('open')) { setOpen(false); btn.focus(); }
     });
   }
+
+  // Desktop dropdown menus: tell screen readers whether each one is open
+  document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+    var trigger = dd.querySelector('.nav-link[aria-expanded]');
+    if (!trigger) return;
+    var set = function (open) { trigger.setAttribute('aria-expanded', String(open)); };
+    dd.addEventListener('mouseenter', function () { set(true); });
+    dd.addEventListener('mouseleave', function () { set(dd.contains(document.activeElement)); });
+    dd.addEventListener('focusin', function () { set(true); });
+    dd.addEventListener('focusout', function (e) { if (!dd.contains(e.relatedTarget)) set(dd.matches(':hover')); });
+  });
 
   // Show the chosen photo's file name in the quote form
   document.querySelectorAll('input[type="file"]').forEach(function (input) {
@@ -65,14 +75,50 @@ document.addEventListener('DOMContentLoaded', function () {
 // Live Google rating & review count (falls back to the numbers already on the page)
 (function () {
   var spots = document.querySelectorAll('[data-gr]');
-  if (!spots.length || location.protocol === 'file:') return;
+  var links = document.querySelectorAll('a[data-gr-link]');
+  if ((!spots.length && !links.length) || location.protocol === 'file:') return;
   var apply = function (d) {
+    if (d && typeof d.placeId === 'string' && /^[\w-]{10,}$/.test(d.placeId)) {
+      links.forEach(function (a) {
+        if (a.href.indexOf('query_place_id=') === -1) a.href += '&query_place_id=' + encodeURIComponent(d.placeId);
+      });
+    }
+    if (d && Array.isArray(d.reviews)) showLiveReviews(d.reviews);
     if (!d || typeof d.count !== 'number' || d.count < 1) return;
     spots.forEach(function (el) {
       var k = el.getAttribute('data-gr');
       if (k === 'count') el.textContent = String(d.count);
       if (k === 'rating' && typeof d.rating === 'number') el.textContent = d.rating.toFixed(1);
     });
+  };
+  // Homepage: swap in the latest 5-star Google reviews, with the reviewer's real name
+  var showLiveReviews = function (list) {
+    var box = document.getElementById('review-cards');
+    if (!box) return;
+    // Only reviews with a real reviewer name are used (no "A Google User" / anonymous ones)
+    var good = list.filter(function (r) { return r.rating === 5 && hasName(r.name) && r.text && r.text.length >= 40 && r.text.length <= 420; }).slice(0, 3);
+    if (!good.length) return;
+    // Top up with the named reviews already on the page if Google sent fewer than 3
+    var seen = good.map(function (r) { return r.name.trim().toLowerCase(); });
+    var keep = [].slice.call(box.querySelectorAll('.review-card')).filter(function (c) {
+      var who = c.querySelector('.reviewer-meta');
+      var n = who && who.firstChild ? String(who.firstChild.textContent).trim() : '';
+      return hasName(n) && seen.indexOf(n.toLowerCase()) < 0;
+    }).slice(0, 3 - good.length).map(function (c) { return c.outerHTML; });
+    box.innerHTML = good.map(function (r) {
+      return '<figure class="review-card">' +
+        '<div class="stars" role="img" aria-label="Rated 5 out of 5 stars">★★★★★</div>' +
+        '<blockquote class="review-quote">“' + esc(r.text) + '”</blockquote>' +
+        '<figcaption class="reviewer-meta">' + esc(r.name) + '<span>Google review' + (r.when ? ' · ' + esc(r.when) : '') + '</span></figcaption>' +
+        '</figure>';
+    }).join('') + keep.join('');
+  };
+  var hasName = function (n) {
+    n = String(n || '').trim();
+    return n.length > 1 && !/^(a )?google user$/i.test(n) && !/anonymous|homeowner|google reviewer/i.test(n);
+  };
+  var esc =function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
   };
   try {
     var saved = JSON.parse(sessionStorage.getItem('kk-google-rating') || 'null');
@@ -85,6 +131,68 @@ document.addEventListener('DOMContentLoaded', function () {
       try { if (d && d.count) sessionStorage.setItem('kk-google-rating', JSON.stringify(d)); } catch (e) {}
     })
     .catch(function () {});
+})();
+
+// Homepage review pop-up: a small card in the bottom corner with one random review.
+// Tapping it opens the Google reviews; the X hides it for the rest of the visit.
+(function () {
+  var cards = document.getElementById('review-cards');
+  var link = document.querySelector('a[data-gr-link]');
+  if (!cards || !link) return;
+  var KEY = 'kk-review-pop-closed';
+  try { if (sessionStorage.getItem(KEY)) return; } catch (e) {}
+  var pop = null, gone = false;
+  var close = function (remember) {
+    gone = true;
+    if (pop) { pop.classList.remove('is-in'); setTimeout(function () { if (pop && pop.parentNode) pop.parentNode.removeChild(pop); }, 300); }
+    if (remember) { try { sessionStorage.setItem(KEY, '1'); } catch (e) {} }
+  };
+  var show = function () {
+    if (gone || document.querySelector('.estimate-modal:not([hidden])')) return;
+    var all = Array.prototype.slice.call(cards.querySelectorAll('.review-card'));
+    if (!all.length) return;
+    var pick = all[Math.floor(Math.random() * all.length)];
+    var quote = (pick.querySelector('.review-quote') || {}).textContent || '';
+    var meta = pick.querySelector('.reviewer-meta');
+    var name = meta && meta.firstChild ? String(meta.firstChild.textContent).trim() : '';
+    quote = quote.replace(/^[“"]|[”"]$/g, '').trim();
+    if (quote.length > 130) quote = quote.slice(0, 127).replace(/\s+\S*$/, '') + '…';
+    pop = document.createElement('aside');
+    pop.className = 'review-pop';
+    pop.setAttribute('aria-label', 'Customer review');
+    pop.innerHTML =
+      '<a class="review-pop-link" target="_blank" rel="noopener">' +
+        '<span class="review-pop-stars" aria-hidden="true">★★★★★</span>' +
+        '<span class="review-pop-quote"></span>' +
+        '<span class="review-pop-meta"><strong></strong> · Google review</span>' +
+        '<span class="review-pop-cta">Read our Google reviews →</span>' +
+      '</a>' +
+      '<button type="button" class="review-pop-close" aria-label="Close review">×</button>';
+    var a = pop.querySelector('.review-pop-link');
+    a.href = link.href;
+    a.setAttribute('aria-label', '5-star Google review: ' + quote + (name ? ', ' + name : '') + '. Read our Google reviews');
+    pop.querySelector('.review-pop-quote').textContent = '“' + quote + '”';
+    pop.querySelector('.review-pop-meta strong').textContent = name || 'Google reviewer';
+    pop.querySelector('.review-pop-close').addEventListener('click', function () { close(true); });
+    a.addEventListener('click', function () { close(true); });
+    document.body.appendChild(pop);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { if (pop) pop.classList.add('is-in'); }); });
+  };
+  // Get out of the way once someone starts filling in the estimate form
+  document.addEventListener('focusin', function (e) {
+    if (pop && e.target.closest && e.target.closest('form')) close(false);
+  });
+  // Shows only once they've scrolled past the first screen, so it never covers
+  // the headline, the estimate form's first fields or the main buttons.
+  var timer = null;
+  var onScroll = function () {
+    if (window.pageYOffset > window.innerHeight * 1.2) {
+      window.removeEventListener('scroll', onScroll);
+      timer = setTimeout(show, 1500);
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('pagehide', function () { if (timer) clearTimeout(timer); });
 })();
 
 // ---------------------------------------------------------------------------
@@ -118,13 +226,15 @@ document.addEventListener('DOMContentLoaded', function () {
       '<button type="button" class="btn btn-primary btn-block">Continue to my estimate request</button>' +
       '</div>';
     wrap.querySelector('.estimate-modal-price').textContent = est.price;
-    wrap.querySelector('.estimate-modal-load').textContent = est.label + (est.special && est.special.length ? ' + specialty items quoted separately' : '');
+    wrap.querySelector('.estimate-modal-load').textContent = est.label + (est.special && est.special.length ? ' + specialty items priced separately' : '');
     var close = function () { wrap.remove(); document.removeEventListener('keydown', onKey); };
     var onKey = function (e) { if (e.key === 'Escape') close(); };
     wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
     wrap.querySelector('button').addEventListener('click', function () {
       close();
-      var f = document.getElementById('full_name'); if (f) f.focus();
+      var f = document.getElementById('service_type') || document.getElementById('full_name');
+      if (f && f.offsetParent === null) f = document.getElementById('full_name');
+      if (f) f.focus();
     });
     document.addEventListener('keydown', onKey);
     document.body.appendChild(wrap);
@@ -140,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var bookingOff = false;
 
     // Let people know a text is coming
-    var micro = form.querySelector('.form-microcopy');
+    var micro = form.querySelector('.form-microcopy:not(.step-note)');
     if (micro && !form.querySelector('.text-notice')) {
       micro.insertAdjacentHTML('beforebegin', '<p class="form-microcopy text-notice">By submitting, you agree we can call or text you at the number above about your request.</p>');
     }
@@ -295,6 +405,57 @@ document.addEventListener('DOMContentLoaded', function () {
     dateIn.addEventListener('change', loadSlots);
     syncBooking();
 
+    // Two short steps: the job first, then contact details. Without this script the whole form shows at once.
+    var steps = form.querySelectorAll('.form-step');
+    var goStep = null, curStep = 2;
+    if (steps.length === 2) {
+      var s1 = steps[0], s2 = steps[1], next = $('.step-next'), back = $('.step-back');
+      var prog = $('.form-progress'), stepErr = $('.step-error'), stepNote = $('.step-note');
+      var card = form.closest('.quote-card') || form;
+      goStep = function (n, move) {
+        curStep = n;
+        s1.hidden = n !== 1; s2.hidden = n !== 2;
+        Array.prototype.forEach.call(prog.children, function (li) {
+          var k = Number(li.getAttribute('data-for'));
+          li.classList.toggle('is-on', k === n); li.classList.toggle('is-done', k < n);
+          if (k === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+        });
+        if (!move) return;
+        var top = card.getBoundingClientRect().top;
+        var head = document.querySelector('.site-header');
+        var off = (head ? head.offsetHeight : 0) + 12;
+        if (top < off || top > window.innerHeight * 0.5) window.scrollTo(0, window.pageYOffset + top - off);
+        var first = (n === 1 ? s1 : s2).querySelector('select, input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), textarea');
+        if (first) { try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); } }
+      };
+      var stepOneOk = function () {
+        stepErr.hidden = true;
+        var fields = s1.querySelectorAll('select, input, textarea');
+        for (var i = 0; i < fields.length; i++) {
+          if (!fields[i].checkValidity()) { fields[i].reportValidity(); return false; }
+        }
+        if (!locHidden.value) {
+          locField.classList.add('has-error');
+          stepErr.textContent = 'Please check at least one place where the items are.'; stepErr.hidden = false;
+          locField.scrollIntoView({ block: 'center' });
+          return false;
+        }
+        return true;
+      };
+      prog.hidden = false; next.hidden = false; back.hidden = false; if (stepNote) stepNote.hidden = false;
+      form.classList.add('is-stepped');
+      next.addEventListener('click', function () { if (stepOneOk()) goStep(2, true); });
+      back.addEventListener('click', function () { goStep(1, true); });
+      Array.prototype.forEach.call(form.querySelectorAll('input[data-loc]'), function (b) {
+        b.addEventListener('change', function () { if (locHidden.value) stepErr.hidden = true; });
+      });
+      // Enter in a step-one box moves on instead of trying to send a half-finished form
+      form.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && curStep === 1 && e.target.tagName === 'INPUT' && e.target.type !== 'file') { e.preventDefault(); next.click(); }
+      });
+      goStep(1, false);
+    }
+
     // Unique email subject per lead so Gmail doesn't stack them into one thread
     var subjectField = $('[name="subject"]');
     var setSubject = function (how) {
@@ -308,8 +469,10 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
       err.hidden = true;
       setSubject('Call to schedule');
+      if (goStep && curStep === 1) { e.preventDefault(); form.querySelector('.step-next').click(); return; }
       if (!locHidden.value) {
         e.preventDefault();
+        if (goStep) { goStep(1, false); form.querySelector('.step-next').click(); return; }
         locField.classList.add('has-error');
         err.textContent = 'Please check at least one place where the items are.'; err.hidden = false;
         locField.scrollIntoView({ block: 'center' });
