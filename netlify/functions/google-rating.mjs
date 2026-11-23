@@ -4,7 +4,7 @@
 // Netlify environment variables:
 //   GOOGLE_PLACES_API_KEY  (required)
 //   GOOGLE_PLACE_ID        (optional: if blank, the listing is found by name)
-//   GOOGLE_PLACE_QUERY     (optional: search text, default "Kazzy & Ko. Hauling Milwaukee WI")
+//   GOOGLE_PLACE_QUERY     (optional: search text to try first; the built-in searches below are tried after it)
 //
 // The answer is cached on Netlify's CDN for a day, so Google is asked about once a day.
 
@@ -15,7 +15,9 @@ const FIELDS = ["id", "displayName", "rating", "userRatingCount", "reviews", "go
 export default async () => {
   const key = process.env.GOOGLE_PLACES_API_KEY;
   const placeId = (process.env.GOOGLE_PLACE_ID || "").trim();
-  const query = process.env.GOOGLE_PLACE_QUERY || "Kazzy & Ko. Hauling Milwaukee WI";
+  // Google lists the business as "Kazzy & Ko Hauling" (no period), so that spelling is tried first.
+  const queries = [process.env.GOOGLE_PLACE_QUERY, "Kazzy & Ko Hauling Milwaukee WI", "Kazzy and Ko Hauling Milwaukee", "Kazzy & Ko. Hauling Milwaukee WI"]
+    .filter((q, i, a) => q && a.indexOf(q) === i);
   if (!key) return reply({ error: "not configured" }, 500, 300);
 
   try {
@@ -27,19 +29,22 @@ export default async () => {
       if (!res.ok) return reply({ error: `google ${res.status}` }, 502, 900);
       place = await res.json();
     } else {
-      const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": key,
-          "X-Goog-FieldMask": FIELDS.map((f) => "places." + f).join(","),
-        },
-        body: JSON.stringify({ textQuery: query, pageSize: 5 }),
-      });
-      if (!res.ok) return reply({ error: `google ${res.status}` }, 502, 900);
-      const data = await res.json();
-      place = (data.places || []).find((p) => (p.displayName?.text || "").toLowerCase().includes(NAME_MATCH));
-      if (!place) return reply({ error: "listing not found", searched: query }, 502, 900);
+      for (const query of queries) {
+        const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": key,
+            "X-Goog-FieldMask": FIELDS.map((f) => "places." + f).join(","),
+          },
+          body: JSON.stringify({ textQuery: query, pageSize: 5 }),
+        });
+        if (!res.ok) return reply({ error: `google ${res.status}` }, 502, 900);
+        const data = await res.json();
+        place = (data.places || []).find((p) => (p.displayName?.text || "").toLowerCase().includes(NAME_MATCH));
+        if (place) break;
+      }
+      if (!place) return reply({ error: "listing not found", searched: queries }, 502, 900);
     }
     if (typeof place.userRatingCount !== "number") return reply({ error: "no data" }, 502, 900);
 
