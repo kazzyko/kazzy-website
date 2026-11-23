@@ -586,6 +586,26 @@ grid-template-columns: 1fr 1fr;
 
 .calc-howto { display: grid; gap: 1rem; margin-top: 2.5rem; }
 @media (min-width: 768px) { .calc-howto { grid-template-columns: 1fr 1fr; } }
+/* "Real loads vary" note under the price bubble. Turns amber with a popping alert icon once an item is picked */
+.loads-vary { display: flex; gap: 0.75rem; align-items: flex-start; margin: 0 0 1.25rem; padding: 0.9rem 1rem; border: 2px solid #d5deee; border-radius: var(--radius-md); background: #f6f8fc; color: #3b4a66; font-size: 0.9rem; line-height: 1.55; transition: background .3s, border-color .3s, box-shadow .3s; scroll-margin: 110px 0 140px; }
+.loads-vary p { margin: 0; }
+.loads-vary strong { color: var(--royal-900); }
+.loads-vary-ico { flex-shrink: 0; display: inline-flex; width: 26px; height: 26px; color: #94a3b8; transition: color .3s; }
+.loads-vary-ico svg { width: 100%; height: 100%; display: block; }
+.loads-vary.is-on { background: #fff8e6; border-color: #f59e0b; box-shadow: 0 6px 18px rgba(245, 158, 11, 0.18); color: #4a3a12; }
+.loads-vary.is-on strong { color: #92400e; }
+.loads-vary.is-on .loads-vary-ico { color: #d97706; }
+.loads-vary.pop .loads-vary-ico { animation: kkAlertPop 0.9s ease-out 2; }
+.loads-vary.flash { animation: kkAlertFlash 1.2s ease-out; }
+@keyframes kkAlertPop { 0% { transform: scale(0.4) rotate(-12deg); } 35% { transform: scale(1.35) rotate(8deg); } 60% { transform: scale(0.92) rotate(-4deg); } 100% { transform: none; } }
+@keyframes kkAlertFlash { 0%, 100% { box-shadow: 0 6px 18px rgba(245, 158, 11, 0.18); } 30% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.45); } }
+.calc-float-warn { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem; padding: 0; border: 0; background: none; color: #fcd34d; font: inherit; font-size: 0.78rem; font-weight: 800; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; min-height: 24px; }
+.calc-float-warn .loads-vary-ico { width: 18px; height: 18px; color: #f59e0b; }
+.calc-float.pop .calc-float-warn .loads-vary-ico { animation: kkAlertPop 0.9s ease-out 2; }
+@media (max-width: 639px) {
+  .loads-vary { font-size: 0.85rem; padding: 0.8rem 0.85rem; margin-bottom: 0.9rem; }
+}
+@media (prefers-reduced-motion: reduce) { .loads-vary.pop .loads-vary-ico, .calc-float.pop .calc-float-warn .loads-vary-ico, .loads-vary.flash { animation: none; } }
 </style>
 <script>
 
@@ -695,6 +715,13 @@ grid-template-columns: 1fr 1fr;
     $('float-sub').textContent = bits.join(' · ');
     $('float-meter').style.width = pct + '%';
     if (window.kkFloatSync) window.kkFloatSync();
+    // "Real loads vary" alert: lights up (and the icon pops) once something is picked
+    var lv = $('loads-vary'), lvOn = !!window.kkCurrent;
+    if (lv && lvOn !== lv.classList.contains('is-on')) {
+      lv.classList.toggle('is-on', lvOn);
+      lv.classList.remove('pop'); $('calc-float').classList.remove('pop');
+      if (lvOn) { void lv.offsetWidth; lv.classList.add('pop'); $('calc-float').classList.add('pop'); }
+    }
     var w = Math.round(Math.min(1, yards / TRAILER) * 444);
     $('svg-fill-bg').setAttribute('width', w); $('svg-cargo-bar').setAttribute('width', w);
   }
@@ -775,6 +802,11 @@ grid-template-columns: 1fr 1fr;
       new IntersectionObserver(function (en) { ctaSeen = en[0].isIntersecting; window.kkFloatSync(); })
         .observe($('calc-quote'));
     }
+    var fw = $('float-warn'), lvBox = $('loads-vary');
+    if (fw && lvBox) fw.addEventListener('click', function () {
+      lvBox.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+      lvBox.classList.remove('flash'); void lvBox.offsetWidth; lvBox.classList.add('flash');
+    });
     render();
   });
   window.kkPriceFor = priceFor;
@@ -904,6 +936,8 @@ grid-template-columns: 1fr 1fr;
 <a href="piano-removal.html">Piano Removal</a>
 <a href="pool-table-removal.html">Pool Table Removal</a>
 <a href="mattress-removal.html">Mattress Disposal</a>
+<a href="exercise-equipment-removal.html">Exercise Equipment Removal</a>
+<a href="yard-waste-removal.html">Yard Waste Removal</a>
 </div>
 <div class="mega-col"><a href="cleanouts.html" class="mega-hub">Property Cleanouts <span aria-hidden="true">→</span></a>
 <a href="garage-cleanouts.html">Garage &amp; Basement Cleanouts</a>
@@ -911,6 +945,7 @@ grid-template-columns: 1fr 1fr;
 <a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a>
 <a href="estate-cleanouts.html">Estate Cleanouts</a>
 <a href="rental-cleanouts.html">Rental, Eviction &amp; Foreclosure Cleanouts</a>
+<a href="storage-unit-cleanouts.html">Storage Unit Cleanouts</a>
 </div>
 <div class="mega-col"><a href="light-demolition.html" class="mega-hub">Light Demolition <span aria-hidden="true">→</span></a>
 <a href="shed-demolition.html">Shed Demolition</a>
@@ -918,6 +953,7 @@ grid-template-columns: 1fr 1fr;
 <a href="deck-demolition.html">Deck Demolition</a>
 <a href="trampoline-removal.html">Trampoline Removal</a>
 <a href="fence-demolition.html">Fence Demolition</a>
+<a href="construction-debris-removal.html">Construction Debris &amp; Dirt Removal</a>
 </div>
 </div>
 </div>
@@ -966,6 +1002,8 @@ grid-template-columns: 1fr 1fr;
 <a href="piano-removal.html">Piano Removal</a>
 <a href="pool-table-removal.html">Pool Table Removal</a>
 <a href="mattress-removal.html">Mattress Disposal</a>
+<a href="exercise-equipment-removal.html">Exercise Equipment Removal</a>
+<a href="yard-waste-removal.html">Yard Waste Removal</a>
 </details>
 <details class="drawer-group"><summary>Property Cleanouts</summary>
 <a href="cleanouts.html" class="drawer-hub">All Property Cleanouts →</a>
@@ -974,6 +1012,7 @@ grid-template-columns: 1fr 1fr;
 <a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a>
 <a href="estate-cleanouts.html">Estate Cleanouts</a>
 <a href="rental-cleanouts.html">Rental, Eviction &amp; Foreclosure Cleanouts</a>
+<a href="storage-unit-cleanouts.html">Storage Unit Cleanouts</a>
 </details>
 <details class="drawer-group"><summary>Light Demolition</summary>
 <a href="light-demolition.html" class="drawer-hub">All Light Demolition →</a>
@@ -982,6 +1021,7 @@ grid-template-columns: 1fr 1fr;
 <a href="deck-demolition.html">Deck Demolition</a>
 <a href="trampoline-removal.html">Trampoline Removal</a>
 <a href="fence-demolition.html">Fence Demolition</a>
+<a href="construction-debris-removal.html">Construction Debris &amp; Dirt Removal</a>
 </details>
 <details class="drawer-group"><summary>Service Areas</summary>
 <a href="junk-removal-milwaukee.html">Milwaukee County</a>
@@ -1002,7 +1042,7 @@ grid-template-columns: 1fr 1fr;
 <div class="drawer-links">
 <a href="pricing.html">Volume Pricing</a>
 <a href="pricing-calculator.html" aria-current="page">Price Calculator</a>
-<a href="before-after.html">Before &amp; After</a>
+<a href="before-after.html">Our Work</a>
 <a href="about-us.html">About Us</a>
 <a href="faq.html">FAQ</a>
 </div>
@@ -1155,6 +1195,10 @@ grid-template-columns: 1fr 1fr;
 <span class="price-tier-badge" id="price-tier-badge">STARTING PRICE</span>
 </div>
 <div class="price-tier-subtitle" id="price-tier-subtitle">One bulky item, or $125 at the curb</div>
+</div>
+<div class="loads-vary" id="loads-vary" role="note">
+<span class="loads-vary-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5 1.5 21h21L12 2.5Z" fill="currentColor"/><path d="M12 9v5.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.4" fill="#fff"/></svg></span>
+<p><strong>Real loads vary.</strong> These are average sizes, and the actual cubic yards can be bigger or smaller depending on the size of each item. Some desks are small writing desks and others are large L-shaped office desks, a king mattress takes more room than a twin, and a side-by-side fridge is bigger than an apartment one. Boxes and bags also fill gaps, while odd shapes take more room. That's why your final price is based on the space your items actually take once they're loaded.</p>
 </div>
 <div class="special-note" id="special-note" hidden>
 <strong>+ Specialty items, priced separately:</strong>
@@ -1493,7 +1537,7 @@ grid-template-columns: 1fr 1fr;
 <li><strong>$550</strong> at 3/4 load (10.5 cu. yd.)</li>
 <li><strong>$700</strong> for a full trailer (14 cu. yd.)</li>
 </ul>
-<p style="margin:0 0 0.75rem;"><strong>Curbside or no-entry pickup?</strong> Single items we don't have to go inside for, including items in an open garage, start at $125.</p>
+<p style="margin:0 0 0.75rem;"><strong>Curbside pickup?</strong> Items already at the curb or in the driveway are $125 for one or $175 for two.</p>
 <p style="margin:0;">Example: a load that fills 40% of the trailer (5.6 cu. yd.) is between a quarter and a half load, so it comes out to about $340.</p>
 </div>
 <div class="info-card">
@@ -1501,7 +1545,6 @@ grid-template-columns: 1fr 1fr;
 <details><summary style="cursor:pointer;font-weight:700;color:var(--royal-700);">Show the cubic-yard list</summary>
 <table class="size-table" style="width:100%;margin-top:0.75rem;font-size:0.9rem;border-collapse:collapse;"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:left;">Cu. yd.</th></tr></thead><tbody><tr><td>Couch / sofa</td><td>2</td></tr><tr><td>Loveseat</td><td>1.4</td></tr><tr><td>Sectional (3+ pieces)</td><td>4</td></tr><tr><td>Recliner / armchair</td><td>0.75</td></tr><tr><td>Mattress</td><td>1</td></tr><tr><td>Box spring</td><td>0.75</td></tr><tr><td>Bed frame / headboard</td><td>0.5</td></tr><tr><td>Dresser / chest</td><td>1.2</td></tr><tr><td>Coffee table / nightstand</td><td>0.4</td></tr><tr><td>Dining table</td><td>1</td></tr><tr><td>Chair (dining, office, patio)</td><td>0.3</td></tr><tr><td>Desk</td><td>0.75</td></tr><tr><td>Refrigerator / freezer</td><td>1.75</td></tr><tr><td>Washer or dryer</td><td>0.85</td></tr><tr><td>Stove / range</td><td>1</td></tr><tr><td>Dishwasher</td><td>0.75</td></tr><tr><td>Water heater</td><td>0.5</td></tr><tr><td>TV</td><td>0.4</td></tr><tr><td>Bookcase / shelving / TV stand</td><td>0.9</td></tr><tr><td>Grill</td><td>1</td></tr><tr><td>Lawn mower</td><td>0.5</td></tr><tr><td>Bicycle</td><td>0.5</td></tr><tr><td>Large trash bag</td><td>0.25</td></tr><tr><td>Box or storage tote</td><td>0.15</td></tr></tbody></table>
 </details>
-<p style="margin-top:1rem;"><strong>Real loads vary.</strong> These are average sizes, and the actual cubic yards can be bigger or smaller depending on the size of each item. Some desks are small writing desks and others are large L-shaped office desks, a king mattress takes more room than a twin, and a side-by-side fridge is bigger than an apartment one. Boxes and bags also fill gaps, while odd shapes take more room. That's why your final price is based on the space your items actually take once they're loaded.</p>
 </div>
 </div>
 </div>
@@ -1511,6 +1554,7 @@ grid-template-columns: 1fr 1fr;
 <span class="calc-float-label">Your estimate</span>
 <span class="calc-float-row"><strong class="calc-float-price" id="float-price">$145</strong><span class="calc-float-sub" id="float-sub"></span></span>
 <span class="calc-float-meter"><i id="float-meter"></i></span>
+<button type="button" class="calc-float-warn" id="float-warn"><span class="loads-vary-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5 1.5 21h21L12 2.5Z" fill="currentColor"/><path d="M12 9v5.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.4" fill="#fff"/></svg></span>Real loads vary. Why?</button>
 </div>
 <a href="tel:+14143886289" class="calc-float-call" aria-label="Call (414) 388-6289"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
 <a href="schedule-a-pickup.html?from=calculator#quote-form" class="btn btn-primary calc-float-btn">Book Now →</a>
@@ -1550,6 +1594,8 @@ grid-template-columns: 1fr 1fr;
 <li><a href="piano-removal.html">Piano Removal</a></li>
 <li><a href="pool-table-removal.html">Pool Table Removal</a></li>
 <li><a href="mattress-removal.html">Mattress Disposal</a></li>
+<li><a href="exercise-equipment-removal.html">Exercise Equipment Removal</a></li>
+<li><a href="yard-waste-removal.html">Yard Waste Removal</a></li>
 </ul>
 </div>
 <div class="footer-col">
@@ -1560,6 +1606,7 @@ grid-template-columns: 1fr 1fr;
 <li><a href="office-cleanouts.html">Commercial &amp; Office Cleanouts</a></li>
 <li><a href="estate-cleanouts.html">Estate Cleanouts</a></li>
 <li><a href="rental-cleanouts.html">Rental, Eviction &amp; Foreclosure Cleanouts</a></li>
+<li><a href="storage-unit-cleanouts.html">Storage Unit Cleanouts</a></li>
 </ul>
 </div>
 <div class="footer-col">
@@ -1570,6 +1617,7 @@ grid-template-columns: 1fr 1fr;
 <li><a href="deck-demolition.html">Deck Demolition</a></li>
 <li><a href="trampoline-removal.html">Trampoline Removal</a></li>
 <li><a href="fence-demolition.html">Fence Demolition</a></li>
+<li><a href="construction-debris-removal.html">Construction Debris &amp; Dirt Removal</a></li>
 </ul>
 </div>
 <div class="footer-col">
@@ -1577,7 +1625,7 @@ grid-template-columns: 1fr 1fr;
 <ul class="footer-links">
 <li><a href="pricing.html">Volume Pricing</a></li>
 <li><a href="pricing-calculator.html">Price Calculator</a></li>
-<li><a href="before-after.html">Before &amp; After</a></li>
+<li><a href="before-after.html">Our Work</a></li>
 <li><a href="faq.html">FAQ</a></li>
 <li><a href="about-us.html">About Us</a></li>
 <li><a href="schedule-a-pickup.html">Schedule a Pickup</a></li>

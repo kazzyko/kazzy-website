@@ -339,6 +339,34 @@ document.addEventListener('DOMContentLoaded', function () {
     Array.prototype.forEach.call(form.querySelectorAll('input[data-loc]'), function (b) { b.addEventListener('change', syncLoc); });
     syncLoc();
 
+    // Curbside discount: when "Curbside or driveway" is checked, the 1- and 2-item boxes show
+    // the regular price crossed out and the curbside price in green. Other boxes stay the same.
+    var curbBox = form.querySelector('input[data-loc][value="Curbside or driveway"]');
+    if (curbBox && mini) {
+      var CURB = { '1 bulky item': '$125', '2 bulky items': '$175' };
+      var curbChips = [];
+      Array.prototype.forEach.call(mini.querySelectorAll('input[name="load_size"]'), function (i) {
+        var name = i.value.replace(/ \(\$\d+\)$/, '');
+        if (!CURB[name]) return;
+        var priceEl = i.parentNode.querySelector('.size-chip-price');
+        curbChips.push({ input: i, name: name, reg: i.getAttribute('data-price'), regValue: i.value, curb: CURB[name], priceEl: priceEl });
+      });
+      var syncCurb = function () {
+        var on = curbBox.checked;
+        curbChips.forEach(function (c) {
+          c.input.setAttribute('data-price', on ? c.curb : c.reg);
+          c.input.value = on ? c.name + ', curbside (' + c.curb + ')' : c.regValue;
+          c.input.parentNode.classList.toggle('is-curb', on);
+          if (c.priceEl) c.priceEl.innerHTML = on
+            ? '<s class="size-chip-was" aria-label="Regular price ' + c.reg + '">' + c.reg + '</s><span class="size-chip-curb">' + c.curb + '</span>'
+            : c.reg;
+          if (c.input.checked) c.input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+      };
+      curbBox.addEventListener('change', syncCurb);
+      syncCurb();
+    }
+
     // Booking
     var isLong = function () { var o = service.options[service.selectedIndex]; return !!(o && o.dataset.long); };
     var booking = function () { var r = form.querySelector('[name="schedule_method"]:checked'); return r && r.value.indexOf('Book') === 0; };
