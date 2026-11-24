@@ -31,6 +31,85 @@
   }, true);
 })();
 
+// Lead source on every form. Fills hidden fields so each Netlify lead (and the
+// lead email) says where the person came from:
+//   lead_source  Google Ads / Facebook-Instagram ad / Google Business Profile /
+//                Google search or Maps (not an ad) / Facebook-Instagram (not an ad) /
+//                Direct / another site's name
+//   ad_campaign, ad_keyword  from utm_campaign / utm_term when the link carries them
+//   first_page   the page they first landed on
+// An ad visit is remembered for 30 days on that device, so someone who clicks an
+// ad and comes back a few days later to fill out the form still shows the ad.
+(function () {
+  var KEY = 'kk-lead-touch', DAYS = 30;
+  var ls = {
+    get: function (k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var ss = {
+    get: function (k) { try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; } },
+    set: function (k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var q;
+  try { q = new URLSearchParams(window.location.search); } catch (e) { return; }
+  var p = function (k) { return (q.get(k) || '').slice(0, 120); };
+  var src = p('utm_source').toLowerCase(), med = p('utm_medium').toLowerCase();
+  var path = window.location.pathname;
+
+  // 1. Paid visits (and tagged links) found in this page's address
+  var touch = null;
+  if (p('gclid') || p('gbraid') || p('wbraid') || (src === 'google' && /cpc|ppc|paid|ads/.test(med))) {
+    touch = { source: 'Google Ads' };
+  } else if (/^(facebook|fb|instagram|ig|meta)$/.test(src) && /cpc|paid|ad/.test(med)) {
+    touch = { source: 'Facebook/Instagram ad' };
+  } else if (src === 'google' && /gbp|gmb|business|maps|local/.test(med)) {
+    touch = { source: 'Google Business Profile' };
+  } else if (p('fbclid')) {
+    touch = { source: 'Facebook/Instagram (ad or post)' };
+  }
+  if (touch) {
+    touch.campaign = p('utm_campaign');
+    touch.keyword = p('utm_term');
+    touch.page = path;
+    touch.t = Date.now();
+    if (/Ads|ad$/.test(touch.source)) ls.set(KEY, touch); // remember ad visits for 30 days
+    ss.set(KEY, touch);
+  }
+
+  // 2. Unpaid visits: where this visit came from (first page of the visit only)
+  if (!ss.get(KEY)) {
+    var ref = '';
+    try { ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch (e) {}
+    var here = window.location.hostname.replace(/^www\./, '');
+    var label;
+    if (!ref) label = 'Direct (typed in, bookmark or text link)';
+    else if (ref === here) label = 'Direct (typed in, bookmark or text link)';
+    else if (/(^|\.)google\./.test(ref)) label = 'Google search or Maps (not an ad)';
+    else if (/bing\.|yahoo\.|duckduckgo\./.test(ref)) label = 'Other search engine';
+    else if (/facebook\.|instagram\.|fb\.me|l\.facebook/.test(ref)) label = 'Facebook/Instagram (not an ad)';
+    else label = ref;
+    ss.set(KEY, { source: label, campaign: '', keyword: '', page: path, t: Date.now() });
+  }
+
+  function current() {
+    var ad = ls.get(KEY);
+    if (ad && Date.now() - ad.t < DAYS * 864e5) return ad;
+    return ss.get(KEY) || {};
+  }
+  function fill() {
+    var c = current();
+    var set = function (form, name, val) { var el = form.querySelector('input[name="' + name + '"]'); if (el) el.value = val || ''; };
+    Array.prototype.forEach.call(document.querySelectorAll('form'), function (f) {
+      set(f, 'lead_source', c.source);
+      set(f, 'ad_campaign', c.campaign);
+      set(f, 'ad_keyword', c.keyword);
+      set(f, 'first_page', c.page);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill); else fill();
+  document.addEventListener('submit', fill, true); // fill again just before sending
+})();
+
 // Start every newly opened page at the top. Back/forward keeps your old spot,
 // and links to a section (#pricing etc.) still jump to that section.
 (function () {
