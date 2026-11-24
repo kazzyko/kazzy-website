@@ -606,6 +606,40 @@ grid-template-columns: 1fr 1fr;
   .loads-vary { font-size: 0.85rem; padding: 0.8rem 0.85rem; margin-bottom: 0.9rem; }
 }
 @media (prefers-reduced-motion: reduce) { .loads-vary.pop .loads-vary-ico, .calc-float.pop .calc-float-warn .loads-vary-ico, .loads-vary.flash { animation: none; } }
+/* Floating price: shows as soon as something is picked.
+   Wide screens: a slim card in the right margin, next to the item buttons (the calculator is narrowed a little to make room).
+   Smaller laptops and phones: a slim bar along the bottom. */
+@media (min-width: 1280px) {
+  .calc-card-shell { max-width: min(1160px, calc(100vw - 340px)); }
+  .calc-float { right: 16px; bottom: 24px; left: auto; width: 140px; flex-direction: column; align-items: stretch; gap: 0.45rem; padding: 0.75rem 0.7rem 0.7rem; text-align: center; }
+  .calc-float-info { align-items: center; gap: 0.2rem; }
+  .calc-float-label { font-size: 0.66rem; }
+  .calc-float-row { flex-direction: column; align-items: center; gap: 0.15rem; }
+  .calc-float-price { font-size: 1.55rem; }
+  .calc-float-sub { font-size: 0.7rem; line-height: 1.3; }
+  .calc-float-meter { width: 100%; }
+  .calc-float-warn { justify-content: center; font-size: 0.7rem; margin-top: 0.3rem; }
+  .calc-float-warn .loads-vary-ico { width: 15px; height: 15px; }
+  .calc-float-btn { padding: 0.55rem 0.4rem; font-size: 0.82rem; width: 100%; justify-content: center; }
+}
+@media (max-width: 1279px) {
+  .calc-float { left: 0; right: 0; bottom: 0; width: auto; border-radius: 0; border-width: 3px 0 0; padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom)); gap: 0.6rem; }
+  .calc-float-label, .calc-float-meter { display: none; }
+  .calc-float-info { gap: 0.1rem; }
+  .calc-float-row { flex-wrap: nowrap; gap: 0.45rem; }
+  .calc-float-price { font-size: 1.35rem; }
+  .calc-float-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .calc-float-warn { margin-top: 0.15rem; font-size: 0.72rem; min-height: 20px; }
+  .calc-float-warn .loads-vary-ico { width: 15px; height: 15px; }
+  .calc-float-btn { padding: 0.6rem 0.9rem; font-size: 0.88rem; }
+  body.calc-float-on .mobile-sticky-bar { display: none; }
+  body.calc-float-on { padding-bottom: 64px; }
+}
+@media (min-width: 768px) and (max-width: 1279px) {
+  .calc-float { justify-content: center; }
+  .calc-float-info { flex: 0 1 auto; flex-direction: row; align-items: center; gap: 1rem; }
+  .calc-float-warn { margin-top: 0; }
+}
 </style>
 <script>
 
@@ -741,24 +775,7 @@ grid-template-columns: 1fr 1fr;
     var cue = $('add-items-cue');
     if (cue && window.kkCurrent) { cue.classList.add('done'); $('add-items-text').textContent = 'Keep adding items'; }
     document.querySelectorAll('.price-pop').forEach(function (o) { o.remove(); });
-    // Phones/tablets: no bubble, the price bar at the bottom updates instead
-    var shell = document.querySelector('.calc-card-shell');
-    var r, edge, gutter = 0;
-    if (window.innerWidth >= 980 && shell) {
-      r = tile.getBoundingClientRect(); edge = shell.getBoundingClientRect().right;
-      gutter = window.innerWidth - edge;
-    }
-    // Only when there's white space beside the calculator, so it never covers anything
-    if (window.innerWidth >= 980 && shell && gutter >= 96) {
-      var el = document.createElement('span');
-      el.className = 'price-pop'; el.setAttribute('aria-hidden', 'true');
-      el.innerHTML = (gutter >= 150 ? '<small>Est.</small> ' : '') + $('price-display').textContent;
-      // Center it in the white space to the right of the calculator
-      el.style.left = (edge + gutter / 2) + 'px';
-      el.style.top = (r.top + r.height / 2) + 'px';
-      document.body.appendChild(el);
-      setTimeout(function () { el.remove(); }, 1300);
-    }
+    // The floating price card shows the running total, so no extra bubble pops up beside the tile
     bump($('price-display')); bump($('float-price'));
   }
 
@@ -789,10 +806,10 @@ grid-template-columns: 1fr 1fr;
       } catch (err) {}
       if (window.kkCurrent) a.setAttribute('href', 'schedule-a-pickup.html?from=calculator#quote-form');
     }, true);
-    // Floating price bar: shows once something is picked and the main price panel is scrolled out of view
+    // Floating price: shows as soon as something is picked (hidden again near the booking box at the bottom)
     var floatBar = $('calc-float'), panelSeen = true, ctaSeen = false;
     window.kkFloatSync = function () {
-      var show = !!window.kkCurrent && !ctaSeen && (window.innerWidth < 980 || !panelSeen);
+      var show = !!window.kkCurrent && !ctaSeen;
       floatBar.hidden = !show;
       document.body.classList.toggle('calc-float-on', show);
     };
@@ -877,7 +894,8 @@ grid-template-columns: 1fr 1fr;
    ],
    "sameAs": [
     "https://www.facebook.com/kazzykohauling",
-    "https://www.instagram.com/kazzykohauling"
+    "https://www.instagram.com/kazzykohauling",
+    "https://maps.google.com/?cid=6258682874939887539"
    ]
   },
   {
@@ -1629,7 +1647,7 @@ grid-template-columns: 1fr 1fr;
 <li><a href="faq.html">FAQ</a></li>
 <li><a href="about-us.html">About Us</a></li>
 <li><a href="schedule-a-pickup.html">Schedule a Pickup</a></li>
-<li><a href="https://www.google.com/maps/search/?api=1&query=Kazzy+%26+Ko.+Hauling+Milwaukee+WI" target="_blank" rel="noopener" data-gr-link>Google Reviews</a></li>
+<li><a href="https://www.google.com/search?q=Kazzy+%26+Ko+Hauling&amp;ludocid=6258682874939887539#lrd=0x47a804b4348bb07b:0x56db4eea329ccfb3,1" target="_blank" rel="noopener" data-gr-link>Google Reviews</a></li>
 </ul>
 </div>
 </div>

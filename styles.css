@@ -910,3 +910,39 @@ textarea.form-control { min-height: 96px; resize: vertical; }
 }
 .job-photo.is-wide .job-photo-img { aspect-ratio: 4 / 3; }
 .jobs-grid:has(> .job-photo.is-wide:only-child) { grid-template-columns: minmax(0, 620px); }
+
+/* ---- Polish pass (Nov 24) ---- */
+/* Footer: "Company" heading lines up with the linked headings beside it */
+.footer-col h2:not(:has(a)) { padding: 0.3rem 0; }
+/* Home/pricing price strip: label the highlighted 1/2 trailer the same way the pricing page does */
+.price-chip.featured { position: relative; }
+.price-chip.featured::before { content: "Most popular"; position: absolute; top: 0; left: 50%; transform: translate(-50%, -55%); padding: 0.14rem 0.55rem; border-radius: 999px; background: var(--gold-400); color: var(--royal-900); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.price-strip { row-gap: 1.1rem; padding-top: 0.55rem; }
+/* Buttons: consistent hover lift and a pressed state */
+.btn { transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease, border-color .15s ease; }
+.btn:active { transform: translateY(1px); }
+@media (max-width: 639px) {
+  /* Button pairs/trios outside the hero: same width, stacked, centered */
+  .section .hero-actions, .cta-band .hero-actions { display: grid; grid-template-columns: 1fr; width: 100%; max-width: 360px; justify-items: stretch; }
+  .section [style*="text-align:center"] > .hero-actions, .section .hero-actions[style*="justify-content:center"], .cta-band .hero-actions { margin-left: auto; margin-right: auto; }
+  .section .hero-actions .btn, .cta-band .hero-actions .btn { width: 100%; justify-content: center; }
+  /* Footer: service link lists in two columns instead of one long list, with bigger tap targets */
+  .footer-grid { grid-template-columns: 1fr 1fr; column-gap: 1.25rem; row-gap: 1.6rem; }
+  .footer-grid > .footer-col:first-child { grid-column: 1 / -1; }
+  .footer-links a { padding: 0.45rem 0; line-height: 1.3; }
+  .footer-col h2 { font-size: 0.74rem; }
+  /* Schedule page photo: shorter on phones so the contact info isn't pushed far down */
+  .photo-frame.schedule-photo { aspect-ratio: 16 / 10; }
+}
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:active { transform: none; } }
+
+/* Booking: an open time that starts too soon to book online. It glows and calls the shop instead of being crossed out */
+.slot.slot-soon { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; text-decoration: none; text-align: center; padding: 0.55rem 0.4rem; border: 2px solid #f59e0b; background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%); color: #7c2d12; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.55); animation: kkSlotGlow 1.8s ease-in-out infinite; }
+.slot.slot-soon:hover, .slot.slot-soon:focus-visible { border-color: #d97706; background: #fde68a; text-decoration: none; }
+.slot-soon-time { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 800; font-size: 0.95rem; color: #7c2d12; }
+.slot-soon-time svg { width: 16px; height: 16px; color: #d97706; flex-shrink: 0; }
+.slot-soon-cta { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: #b45309; }
+.slot-msg-soon { padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); background: #fffbeb; border: 1px solid #fcd34d; color: #78350f; }
+.slot-msg-soon a { color: #9a3412; font-weight: 800; }
+@keyframes kkSlotGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); } 50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } }
+@media (prefers-reduced-motion: reduce) { .slot.slot-soon { animation: none; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35); } }
