@@ -3,7 +3,7 @@
 //
 // Netlify environment variables:
 //   GOOGLE_PLACES_API_KEY  (required)
-//   GOOGLE_PLACE_ID        (optional: if blank, the listing is found by name)
+//   GOOGLE_PLACE_ID        (optional: overrides the built-in Place ID below)
 //   GOOGLE_PLACE_QUERY     (optional: search text to try first; the built-in searches below are tried after it)
 //
 // The answer is cached on Netlify's CDN for a day, so Google is asked about once a day.
@@ -14,21 +14,26 @@ const FIELDS = ["id", "displayName", "rating", "userRatingCount", "reviews", "go
 
 export default async () => {
   const key = process.env.GOOGLE_PLACES_API_KEY;
-  const placeId = (process.env.GOOGLE_PLACE_ID || "").trim();
+  // Google Place ID of the Kazzy & Ko Hauling listing (worked out from its review link).
+  // A GOOGLE_PLACE_ID variable in Netlify overrides it.
+  const placeId = (process.env.GOOGLE_PLACE_ID || "ChIJe7CLNLQEqEcRs8-cMupO21Y").trim();
   // Google lists the business as "Kazzy & Ko Hauling" (no period), so that spelling is tried first.
-  const queries = [process.env.GOOGLE_PLACE_QUERY, "Kazzy & Ko Hauling Milwaukee WI", "Kazzy and Ko Hauling Milwaukee", "Kazzy & Ko. Hauling Milwaukee WI"]
+  const queries = [process.env.GOOGLE_PLACE_QUERY, "Kazzy & Ko Hauling", "Kazzy & Ko Hauling Milwaukee WI", "Kazzy and Ko Hauling", "Kazzy Ko Hauling junk removal", "Kazzy & Ko. Hauling"]
     .filter((q, i, a) => q && a.indexOf(q) === i);
   if (!key) return reply({ error: "not configured" }, 500, 300);
 
   try {
-    let place;
+    let place, idStatus;
     if (placeId) {
       const res = await fetch(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`, {
         headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": FIELDS.join(",") },
       });
-      if (!res.ok) return reply({ error: `google ${res.status}` }, 502, 900);
-      place = await res.json();
-    } else {
+      idStatus = res.status;
+      if (res.ok) place = await res.json();
+    }
+    // If the Place ID lookup didn't work, fall back to searching by name.
+    if (!place) {
+      const seen = [];
       for (const query of queries) {
         const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
           method: "POST",
@@ -37,14 +42,20 @@ export default async () => {
             "X-Goog-Api-Key": key,
             "X-Goog-FieldMask": FIELDS.map((f) => "places." + f).join(","),
           },
-          body: JSON.stringify({ textQuery: query, pageSize: 5 }),
+          // Bias the search to the Milwaukee area (about 50 km around downtown).
+          body: JSON.stringify({
+            textQuery: query,
+            pageSize: 10,
+            locationBias: { circle: { center: { latitude: 43.0389, longitude: -87.9065 }, radius: 50000 } },
+          }),
         });
         if (!res.ok) return reply({ error: `google ${res.status}` }, 502, 900);
         const data = await res.json();
+        for (const p of data.places || []) if (p.displayName?.text && seen.length < 15) seen.push(p.displayName.text);
         place = (data.places || []).find((p) => (p.displayName?.text || "").toLowerCase().includes(NAME_MATCH));
         if (place) break;
       }
-      if (!place) return reply({ error: "listing not found", searched: queries }, 502, 900);
+      if (!place) return reply({ error: "listing not found", placeIdStatus: idStatus, searched: queries, googleReturned: seen }, 502, 900);
     }
     if (typeof place.userRatingCount !== "number") return reply({ error: "no data" }, 502, 900);
 
