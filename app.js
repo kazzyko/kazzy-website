@@ -1,3 +1,36 @@
+// Google Ads visit marker. Any page reached from a Google ad click (Google adds
+// gclid / gbraid / wbraid to every ad click, sitelinks included) marks the visitor
+// as an ad visitor, the same flag Aidan's lp-*.html pages set. thank-you.html then
+// sends the Google Ads form conversion (kk_form_lead). No GTM change needed.
+(function () {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    if (q.get('gclid') || q.get('gbraid') || q.get('wbraid') ||
+        (q.get('utm_source') === 'google' && q.get('utm_medium') === 'cpc')) {
+      sessionStorage.setItem('kk_ad_visit', '1');
+      sessionStorage.setItem('kk_ad_call', '1');
+    }
+  } catch (e) {}
+})();
+
+// Google Ads phone-tap tracking on every page. Aidan's lp-*.html pages already
+// send kk_call_click on their own, so they're skipped here. On every other page,
+// a tap on a tel: link sends kk_call_click only for visitors who came from a
+// Google ad in this visit (GTM then records the "ALVIER - Call" conversion).
+(function () {
+  if (/^\/lp-/.test(window.location.pathname)) return;
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+    if (!a) return;
+    try {
+      if (sessionStorage.getItem('kk_ad_visit') !== '1' &&
+          sessionStorage.getItem('kk_ad_call') !== '1') return;
+    } catch (err) { return; }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'kk_call_click' });
+  }, true);
+})();
+
 // Start every newly opened page at the top. Back/forward keeps your old spot,
 // and links to a section (#pricing etc.) still jump to that section.
 (function () {
@@ -80,7 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var apply = function (d) {
     if (d && typeof d.placeId === 'string' && /^[\w-]{10,}$/.test(d.placeId)) {
       links.forEach(function (a) {
-        if (a.href.indexOf('query_place_id=') === -1) a.href += '&query_place_id=' + encodeURIComponent(d.placeId);
+        // Only maps-search links get the place ID added; direct review links already point at the listing.
+        if (a.href.indexOf('/maps/search/') !== -1 && a.href.indexOf('query_place_id=') === -1) a.href += '&query_place_id=' + encodeURIComponent(d.placeId);
       });
     }
     if (d && Array.isArray(d.reviews)) showLiveReviews(d.reviews);
@@ -381,8 +415,18 @@ document.addEventListener('DOMContentLoaded', function () {
           if (!res.ok) throw new Error(res.d && res.d.error || 'unavailable');
           var slots = isLong() ? res.d.long : res.d.short;
           grid.innerHTML = '';
-          var any = false;
+          var any = false, anySoon = false;
           slots.forEach(function (s) {
+            // Open, but starting too soon to book online: show a glowing "call now" button instead of crossing it out
+            if (s.soon) {
+              anySoon = true;
+              var c = document.createElement('a');
+              c.className = 'slot slot-soon'; c.href = 'tel:+14143886289';
+              c.setAttribute('aria-label', s.label + ' may still be open. Call (414) 388-6289 to check.');
+              c.innerHTML = '<span class="slot-soon-time"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 6.8V12l3.6 2.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' + s.label + '</span><span class="slot-soon-cta">Hurry · Call now</span>';
+              grid.appendChild(c);
+              return;
+            }
             var b = document.createElement('button');
             b.type = 'button'; b.className = 'slot'; b.textContent = s.label;
             b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', 'false');
@@ -394,9 +438,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             grid.appendChild(b);
           });
-          if (!any) grid.insertAdjacentHTML('beforeend', '<p class="slot-msg">No open times that day. Try another date.</p>');
+          if (anySoon) grid.insertAdjacentHTML('beforeend', '<p class="slot-msg slot-msg-soon">Need it today? Times marked <strong>Call now</strong> are too soon to book online but may still be open. Call <a href="tel:+14143886289">(414) 388-6289</a> and we\'ll try to fit you in.</p>');
+          else if (!any) grid.insertAdjacentHTML('beforeend', '<p class="slot-msg">No open times that day. Try another date.</p>');
           // Arrow keys move between open time slots, like a normal radio group
-          var open = Array.prototype.slice.call(grid.querySelectorAll('.slot:not(:disabled)'));
+          var open = Array.prototype.slice.call(grid.querySelectorAll('button.slot:not(:disabled)'));
           open.forEach(function (b, i) {
             b.tabIndex = i === 0 ? 0 : -1;
             b.addEventListener('keydown', function (e) {

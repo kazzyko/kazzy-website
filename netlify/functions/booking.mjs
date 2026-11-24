@@ -96,8 +96,11 @@ function openSlots(date, list, busy) {
   const now = Date.now();
   return list.map(([s, e]) => {
     const start = Date.parse(at(date, s)), end = Date.parse(at(date, e));
-    const free = start - now >= NOTICE_MINUTES * 60000 && !busy.some(([bs, be]) => bs < end && be > start);
-    return { id: `${s}-${e}`, label: slotLabel([s, e]), available: free };
+    const booked = busy.some(([bs, be]) => bs < end && be > start);
+    const free = start - now >= NOTICE_MINUTES * 60000 && !booked;
+    // Not booked, but starting too soon to book online: the page shows "Call now" for these
+    const soon = !booked && !free && start > now;
+    return { id: `${s}-${e}`, label: slotLabel([s, e]), available: free, soon };
   });
 }
 
