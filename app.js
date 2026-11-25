@@ -65,7 +65,10 @@
   } else if (src === 'google' && /gbp|gmb|business|maps|local/.test(med)) {
     touch = { source: 'Google Business Profile' };
   } else if (p('fbclid')) {
-    touch = { source: 'Facebook/Instagram (ad or post)' };
+    // Facebook adds fbclid to every outbound click. Every Meta ad link carries
+    // utm_medium=paid (caught above) and the owners don't boost posts, so an
+    // fbclid without those tags is the page, a post, a bio link or a share.
+    touch = { source: 'Facebook/Instagram (not an ad)' };
   }
   if (touch) {
     touch.campaign = p('utm_campaign');

@@ -685,7 +685,14 @@ grid-template-columns: 1fr 1fr;
       return { price: 145, badge: 'MINIMUM PICKUP', sub: 'One bulky item, or $125 at the curb', pill: 0, head: 'MINIMUM PICKUP', label: 'Minimum pickup (one bulky item)' };
     }
     if (Math.abs(yards - 2.5) < 0.001) {
-      return { price: 195, badge: 'TWO BULKY ITEMS', sub: 'Any two bulky items', pill: 1, head: 'TWO ITEMS', label: 'Two bulky items' };
+      return { price: 195, badge: 'TWO BULKY ITEMS', sub: 'Any two bulky items, or $175 at the curb', pill: 1, head: 'TWO ITEMS', label: 'Two bulky items' };
+    }
+    if (yards < 2.5) {
+      // Between one and two bulky items (e.g. several smaller items): volume price, plus the
+      // curbside rate, which is $20 less, the same gap as $145/$125 and $195/$175.
+      var small = round5(curve(yards)), spill = 0;
+      for (var j = 1; j < POINTS.length; j++) if (yards >= POINTS[j][0] - 0.15) spill = j - 1;
+      return { price: small, badge: 'SMALL LOAD', sub: 'Less than two bulky items, or $' + (small - 20) + ' at the curb', pill: spill, head: 'ABOUT ' + pct + '% FULL', label: 'Small load (about ' + pct + '% of the trailer)' };
     }
     if (yards <= TRAILER + SLACK) {
       var name = loadName(yards);
@@ -1236,7 +1243,7 @@ grid-template-columns: 1fr 1fr;
 <details class="size-guide" style="margin:0.4rem 0 0.2rem;border:1px solid var(--border,#dfe3ea);border-radius:12px;padding:0.6rem 0.85rem;background:#fff;">
 <summary style="cursor:pointer;font-weight:700;color:var(--royal-700);">How we size each item</summary>
 <p style="margin:0.6rem 0 0.4rem;font-size:0.9rem;">Any single item is a $145 minimum pickup ($125 if it's already at the curb or in the driveway). Two bulky items are $195.</p>
-<table class="size-table" style="width:100%;margin-top:0.4rem;font-size:0.9rem;border-collapse:collapse;"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:left;">Cu. yd.</th></tr></thead><tbody><tr><td>Couch / sofa</td><td>1.25</td></tr><tr><td>Loveseat</td><td>1.25</td></tr><tr><td>Sectional (3+ pieces)</td><td>2.5</td></tr><tr><td>Recliner / armchair</td><td>1.25</td></tr><tr><td>Mattress</td><td>1.25</td></tr><tr><td>Box spring</td><td>0.75</td></tr><tr><td>Bed frame / headboard</td><td>0.5</td></tr><tr><td>Dresser / chest</td><td>1.25</td></tr><tr><td>Coffee table / nightstand</td><td>0.4</td></tr><tr><td>Dining table</td><td>1</td></tr><tr><td>Chair (dining, office, patio)</td><td>0.3</td></tr><tr><td>Desk</td><td>0.75</td></tr><tr><td>Refrigerator / freezer</td><td>1.25</td></tr><tr><td>Washer or dryer</td><td>1.25</td></tr><tr><td>Stove / range</td><td>1.25</td></tr><tr><td>Dishwasher</td><td>0.75</td></tr><tr><td>Water heater</td><td>0.5</td></tr><tr><td>TV</td><td>0.4</td></tr><tr><td>Bookcase / shelving / TV stand</td><td>0.9</td></tr><tr><td>Grill</td><td>1</td></tr><tr><td>Lawn mower</td><td>0.5</td></tr><tr><td>Bicycle</td><td>0.5</td></tr><tr><td>Large trash bag</td><td>0.25</td></tr><tr><td>Box or storage tote</td><td>0.15</td></tr></tbody></table>
+<table class="size-table" style="width:100%;margin-top:0.4rem;font-size:0.9rem;border-collapse:collapse;"><thead><tr><th style="text-align:left;">Item</th><th style="text-align:left;">Cu. yd.</th></tr></thead><tbody><tr><td>Couch / sofa</td><td>1.25</td></tr><tr><td>Loveseat</td><td>1.25</td></tr><tr><td>Sectional (3+ pieces)</td><td>2.5</td></tr><tr><td>Recliner / armchair</td><td>1.25</td></tr><tr><td>Mattress</td><td>1.25</td></tr><tr><td>Box spring</td><td>0.75</td></tr><tr><td>Bed frame / headboard</td><td>0.5</td></tr><tr><td>Dresser / chest</td><td>1.25</td></tr><tr><td>Coffee table / nightstand</td><td>0.4</td></tr><tr><td>Dining table</td><td>1.25</td></tr><tr><td>Chair (dining, office, patio)</td><td>0.3</td></tr><tr><td>Desk</td><td>0.75</td></tr><tr><td>Refrigerator / freezer</td><td>1.25</td></tr><tr><td>Washer or dryer</td><td>1.25</td></tr><tr><td>Stove / range</td><td>1.25</td></tr><tr><td>Dishwasher</td><td>1.25</td></tr><tr><td>Water heater</td><td>1.25</td></tr><tr><td>TV</td><td>0.4</td></tr><tr><td>Bookcase / shelving / TV stand</td><td>1.25</td></tr><tr><td>Grill</td><td>1</td></tr><tr><td>Lawn mower</td><td>1.25</td></tr><tr><td>Bicycle</td><td>0.5</td></tr><tr><td>Large trash bag</td><td>0.25</td></tr><tr><td>Box or storage tote</td><td>0.15</td></tr></tbody></table>
 <p style="margin:0.6rem 0 0;font-size:0.85rem;color:var(--muted,#5b6472);">Sizes are averages. Your final price is confirmed on site, based on how much room your stuff actually takes up in the trailer.</p>
 </details>
 <h3 class="item-cat-title">Furniture</h3>
@@ -1322,7 +1329,7 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Coffee table / nightstand">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="dining_table" data-yards="1.0" tabindex="0" role="button" aria-label="Add Dining table">
+<div class="item-tile" data-id="dining_table" data-yards="1.25" tabindex="0" role="button" aria-label="Add Dining table">
 <div class="item-tile-info"><div class="item-tile-name">Dining table</div></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
@@ -1379,7 +1386,7 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Stove / range">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="dishwasher" data-yards="0.75" tabindex="0" role="button" aria-label="Add Dishwasher">
+<div class="item-tile" data-id="dishwasher" data-yards="1.25" tabindex="0" role="button" aria-label="Add Dishwasher">
 <div class="item-tile-info"><div class="item-tile-name">Dishwasher</div></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
@@ -1388,7 +1395,7 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Dishwasher">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="water_heater" data-yards="0.5" tabindex="0" role="button" aria-label="Add Water heater">
+<div class="item-tile" data-id="water_heater" data-yards="1.25" tabindex="0" role="button" aria-label="Add Water heater">
 <div class="item-tile-info"><div class="item-tile-name">Water heater</div></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
@@ -1409,7 +1416,7 @@ grid-template-columns: 1fr 1fr;
 </div>
 <h3 class="item-cat-title">Garage, outdoor & bags</h3>
 <div class="item-selector-grid">
-<div class="item-tile" data-id="bookcase" data-yards="0.9" tabindex="0" role="button" aria-label="Add Bookcase / shelving / TV stand">
+<div class="item-tile" data-id="bookcase" data-yards="1.25" tabindex="0" role="button" aria-label="Add Bookcase / shelving / TV stand">
 <div class="item-tile-info"><div class="item-tile-name">Bookcase / shelving / TV stand</div></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
@@ -1427,7 +1434,7 @@ grid-template-columns: 1fr 1fr;
 <button type="button" class="qty-btn qty-btn-plus" data-action="plus" aria-label="Add one more Grill">+</button>
 </div>
 </div>
-<div class="item-tile" data-id="mower" data-yards="0.5" tabindex="0" role="button" aria-label="Add Lawn mower">
+<div class="item-tile" data-id="mower" data-yards="1.25" tabindex="0" role="button" aria-label="Add Lawn mower">
 <div class="item-tile-info"><div class="item-tile-name">Lawn mower</div></div>
 <span class="item-plus-only" aria-hidden="true">+</span>
 <div class="item-counter-controls">
@@ -1556,7 +1563,7 @@ grid-template-columns: 1fr 1fr;
 <div class="calc-howto">
 <div class="info-card">
 <h3>How the estimate works</h3>
-<p>Each item has an average size in cubic yards, based on standard moving-industry size charts and real junk removal loads. Bulky items like a couch, mattress or appliance count as 1.25 each, and a sectional counts as two. We add them up and price the total against our load sizes. If it lands in between, the price lands in between too.</p>
+<p>Each item has an average size in cubic yards, based on standard moving-industry size charts and real junk removal loads. Bulky items like a couch, mattress, appliance, dining table, bookcase or lawn mower count as 1.25 each, and a sectional counts as two. We add them up and price the total against our load sizes. If it lands in between, the price lands in between too.</p>
 <ul class="check-list" style="margin-bottom:0.75rem;">
 <li><strong>$145</strong> for one bulky item, like a couch, recliner, mattress or appliance</li>
 <li><strong>$195</strong> for two bulky items</li>
