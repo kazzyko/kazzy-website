@@ -689,10 +689,10 @@ grid-template-columns: 1fr 1fr;
     }
     if (yards < 2.5) {
       // Between one and two bulky items (e.g. several smaller items): volume price, plus the
-      // curbside rate, which is $20 less, the same gap as $145/$125 and $195/$175.
+      // flat two-item curbside rate ($175; owner decision Nov 25).
       var small = round5(curve(yards)), spill = 0;
       for (var j = 1; j < POINTS.length; j++) if (yards >= POINTS[j][0] - 0.15) spill = j - 1;
-      return { price: small, badge: 'SMALL LOAD', sub: 'Less than two bulky items, or $' + (small - 20) + ' at the curb', pill: spill, head: 'ABOUT ' + pct + '% FULL', label: 'Small load (about ' + pct + '% of the trailer)' };
+      return { price: small, badge: 'SMALL LOAD', sub: 'Less than two bulky items, or $175 at the curb', pill: spill, head: 'ABOUT ' + pct + '% FULL', label: 'Small load (about ' + pct + '% of the trailer)' };
     }
     if (yards <= TRAILER + SLACK) {
       var name = loadName(yards);

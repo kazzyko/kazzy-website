@@ -144,6 +144,20 @@
   }, true);
 })();
 
+// Meta pixel "Contact" event on call / text taps, so Meta sees calls and texts
+// from its ads. The pixel itself comes from Netlify snippet injection. Fires once
+// per visit per method (phone call, text); does nothing if the pixel isn't loaded.
+(function () {
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"], a[href^="sms:"]');
+    if (!a || typeof window.fbq !== 'function') return;
+    var isText = /^sms:/i.test(a.getAttribute('href') || '');
+    var key = isText ? 'kk-meta-contact-sms' : 'kk-meta-contact-tel';
+    try { if (sessionStorage.getItem(key) === '1') return; sessionStorage.setItem(key, '1'); } catch (err) {}
+    window.fbq('track', 'Contact', { content_name: isText ? 'Text' : 'Phone call', content_category: window.location.pathname });
+  }, true);
+})();
+
 // Start every newly opened page at the top. Back/forward keeps your old spot,
 // and links to a section (#pricing etc.) still jump to that section.
 (function () {
