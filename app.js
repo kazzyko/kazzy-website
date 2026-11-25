@@ -110,6 +110,37 @@
   document.addEventListener('submit', fill, true); // fill again just before sending
 })();
 
+// Google Analytics events (GA4 G-QHD0PKTNNF, loaded by the gtag snippet in each
+// page's <head>; GA is kept in the site code, not in GTM, so nothing counts twice).
+//   generate_lead     on the thank-you page, once per visit, with the lead source
+//   phone_call_click  on every tap of a tel: link (incl. the "Call now" slots)
+// Aidan's Google Ads events (kk_form_lead / kk_call_click) are separate and unchanged.
+(function () {
+  function src() {
+    var read = function (store) { try { return JSON.parse(store.getItem('kk-lead-touch') || 'null'); } catch (e) { return null; } };
+    var ad = read(localStorage);
+    if (ad && Date.now() - ad.t < 30 * 864e5) return ad;
+    return read(sessionStorage) || {};
+  }
+  function send(name, params) {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params);
+  }
+  if (/^\/thank-you/.test(window.location.pathname)) {
+    var sent = false;
+    try { sent = sessionStorage.getItem('kk-ga-lead-sent') === '1'; } catch (e) {}
+    if (!sent) {
+      var c = src();
+      send('generate_lead', { lead_source: c.source || '', ad_campaign: c.campaign || '' });
+      try { sessionStorage.setItem('kk-ga-lead-sent', '1'); } catch (e) {}
+    }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+    if (!a) return;
+    send('phone_call_click', { lead_source: src().source || '', page: window.location.pathname });
+  }, true);
+})();
+
 // Start every newly opened page at the top. Back/forward keeps your old spot,
 // and links to a section (#pricing etc.) still jump to that section.
 (function () {
